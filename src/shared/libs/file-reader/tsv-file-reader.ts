@@ -5,6 +5,9 @@ import { FeatureType, Offer, OfferType, Coordinates, City } from '../../types/in
 
 export class TSVFileReader implements FileReader {
   private rawData = '';
+  private tabSeparator = '\t';
+  private commaSeparator = ',';
+  private nextLineSeparator = '\n';
 
   constructor(
     private readonly filename: string
@@ -18,7 +21,7 @@ export class TSVFileReader implements FileReader {
 
   private parseRawDataToOffers(): Offer[] {
     return this.rawData
-      .split('\n')
+      .split(this.nextLineSeparator)
       .filter((row) => row.trim().length > 0)
       .map((line) => this.parseLineToOffer(line));
   }
@@ -32,7 +35,6 @@ export class TSVFileReader implements FileReader {
       previewImage,
       images,
       premium,
-      favourite,
       rating,
       type,
       roomsCount,
@@ -42,7 +44,7 @@ export class TSVFileReader implements FileReader {
       author,
       commentsCount,
       coordinates
-    ] = line.split('\t');
+    ] = line.split(this.tabSeparator);
 
     return {
       title,
@@ -51,8 +53,7 @@ export class TSVFileReader implements FileReader {
       city: city as City,
       previewImage,
       images: this.parseImages(images),
-      premium: JSON.parse(premium),
-      favourite: JSON.parse(favourite),
+      premium: this.parseBoolean(premium),
       rating: Number(rating),
       type: type as OfferType,
       roomsCount: Number(roomsCount),
@@ -65,16 +66,20 @@ export class TSVFileReader implements FileReader {
     };
   }
 
+  private parseBoolean(booleanSting: string): boolean {
+    return booleanSting === 'true';
+  }
+
   private parseImages(images: string): string[] {
-    return images.split(',');
+    return images.split(this.commaSeparator);
   }
 
   private parseFeatures(features: string): FeatureType[] {
-    return features.split(',') as FeatureType[];
+    return features.split(this.commaSeparator) as FeatureType[];
   }
 
   private parseCoordinates(coordinates: string): Coordinates {
-    const [latitude, longitude] = coordinates.split(',');
+    const [latitude, longitude] = coordinates.split(this.commaSeparator);
     return { latitude: Number(latitude), longitude: Number(longitude) };
   }
 

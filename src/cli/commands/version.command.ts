@@ -19,7 +19,7 @@ function isPackageJSONConfig(value: unknown): value is PackageJSONConfig {
 
 export class VersionCommand implements Command {
   constructor(
-    private readonly filePath: string = 'package.json'
+    private readonly filePath = 'package.json'
   ) {}
 
   private readVersion(): string {
@@ -33,11 +33,9 @@ export class VersionCommand implements Command {
     return importedContent.version;
   }
 
-  public getName(): string {
-    return '--version';
-  }
+  public readonly name = '--version';
 
-  public async execute(..._parameters: string[]): Promise<void> {
+  public execute(..._parameters: string[]): void {
     try {
       const version = this.readVersion();
       console.info(chalk.bgGreen.bold(version));
