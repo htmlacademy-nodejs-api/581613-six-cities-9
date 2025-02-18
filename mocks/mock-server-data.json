@@ -1,0 +1,58 @@
+{
+  "api": {
+    "titles": [
+      "Шикарная вилла",
+      "Уютная квартира",
+      "Бунгало на природе",
+      "Койко-место",
+      "Хижина в лесу",
+      "Апартаменты у метро"
+    ],
+    "descriptions": [
+      "Все необходимое для комфортного ночлега",
+      "Супер предложение по соотношению цена-качества",
+      "В пешей доступности от достопримечательностей и транспорта",
+      "Почувствуйте себя как дома",
+      "Отличный вариант для путешественников"
+    ],
+    "images": [
+      "bungalo.jpg",
+      "apartments.jpg",
+      "villa.jpg",
+      "flat.jpg",
+      "hut.jpg",
+      "hostel.jpg"
+    ],
+    "cities": [
+      "Paris",
+      "Cologne",
+      "Brussels",
+      "Amsterdam",
+      "Hamburg",
+      "Dusseldorf"
+    ],
+    "offerTypes": [
+      "apartment",
+      "house",
+      "room",
+      "hotel"
+    ],
+    "features": [
+      "Breakfast",
+      "Air Conditioning",
+      "Laptop friendly workspace",
+      "Baby seat",
+      "Washer",
+      "Towels",
+      "Fridge"
+    ],
+    "authors": [
+      "John Doe",
+      "Leroy Jenkins",
+      "Arthas Menethil",
+      "Bilbo Baggins",
+      "Adam Warlock",
+      "Tali Zora"
+    ]
+  }
+}
