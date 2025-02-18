@@ -4,5 +4,6 @@ export {
   getRandomItem,
   getRandomBoolean,
   getRandomItemsToStringWithSeparator,
-  generateStringWithSeparatorFromArray
+  generateStringWithSeparatorFromArray,
+  getErrorMessage
 } from './common.js';

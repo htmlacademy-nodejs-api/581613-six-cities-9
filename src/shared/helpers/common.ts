@@ -24,3 +24,6 @@ export function getRandomBoolean(): boolean {
   return !generateRandomValue(0, 2);
 }
 
+export function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : '';
+}
