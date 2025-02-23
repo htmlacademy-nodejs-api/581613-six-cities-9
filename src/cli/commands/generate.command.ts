@@ -8,6 +8,7 @@ import { getErrorMessage } from '../../shared/helpers/common.js';
 
 export class GenerateCommand implements Command {
   private initialData: MockServerData;
+  public readonly name = '--generate';
 
   private async load(url: string) {
     try {
@@ -25,8 +26,6 @@ export class GenerateCommand implements Command {
       await tsvFileWriter.write(tsvOfferGenerator.generate());
     }
   }
-
-  public readonly name = '--generate';
 
   public async execute(...parameters: string[]): Promise<void> {
     const [count, filepath, url] = parameters;

@@ -5,3 +5,4 @@ export { Coordinates } from './coordinates.type.js';
 export { City } from './cities.enum.js';
 
 export { MockServerData } from './mock-server-data.type.js';
+export { Component } from './component.enum.js';
