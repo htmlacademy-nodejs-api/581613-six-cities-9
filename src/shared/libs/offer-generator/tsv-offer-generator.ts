@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import { OfferGenerator } from './offer-generator.interface.js';
 import { MockServerData } from '../../types/index.js';
 import { generateRandomValue, getRandomItem, generateStringWithSeparatorFromArray, getRandomBoolean, getRandomItemsToStringWithSeparator } from '../../helpers/index.js';
+import { TAB_SEPARATOR } from '../../constants/common.js';
 
 const MIN_PRICE = 100;
 const MAX_PRICE = 100000;
@@ -47,6 +48,6 @@ export class TSVOfferGenerator implements OfferGenerator {
 
     return [
       title, description, createdDate, city, previewImage, images, premium, rating, type, roomsCount, guestsCount, price, features, author, commentsCount, coordinates
-    ].join('\t');
+    ].join(TAB_SEPARATOR);
   }
 }

@@ -3,10 +3,9 @@ import { createReadStream } from 'node:fs';
 
 import { FileReader } from './file-reader.interface.js';
 import { FeatureType, Offer, OfferType, Coordinates, City } from '../../types/index.js';
+import { COMMA_SEPARATOR, NEXT_LINE_SEPARATOR, TAB_SEPARATOR } from '../../constants/index.js';
 
 export class TSVFileReader extends EventEmitter implements FileReader {
-  private TAB_SEPARATOR = '\t';
-  private COMMA_SEPARATOR = ',';
   private CHUNK_SIZE = 16384; // 16KB
 
   constructor(
@@ -33,7 +32,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       author,
       commentsCount,
       coordinates
-    ] = line.split(this.TAB_SEPARATOR);
+    ] = line.split(TAB_SEPARATOR);
 
     return {
       title,
@@ -60,15 +59,15 @@ export class TSVFileReader extends EventEmitter implements FileReader {
   }
 
   private parseImages(images: string): string[] {
-    return images.split(this.COMMA_SEPARATOR);
+    return images.split(COMMA_SEPARATOR);
   }
 
   private parseFeatures(features: string): FeatureType[] {
-    return features.split(this.COMMA_SEPARATOR) as FeatureType[];
+    return features.split(COMMA_SEPARATOR) as FeatureType[];
   }
 
   private parseCoordinates(coordinates: string): Coordinates {
-    const [latitude, longitude] = coordinates.split(this.COMMA_SEPARATOR);
+    const [latitude, longitude] = coordinates.split(COMMA_SEPARATOR);
     return { latitude: Number(latitude), longitude: Number(longitude) };
   }
 
@@ -84,7 +83,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
 
     for await (const chunk of readStream) {
       remainingData += chunk.toString();
-      while ((nextLinePosition = remainingData.indexOf('\n')) >= 0) {
+      while ((nextLinePosition = remainingData.indexOf(NEXT_LINE_SEPARATOR)) >= 0) {
         const completeRow = remainingData.slice(0, nextLinePosition + 1);
         remainingData = remainingData.slice(++nextLinePosition);
         importedRowCount++;

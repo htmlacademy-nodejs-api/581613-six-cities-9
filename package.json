@@ -15,6 +15,7 @@
     "compile": "tsc -p tsconfig.json",
     "clean": "rimraf dist",
     "ts": "tsc --noEmit && node --no-warnings=--no-warnings=ExperimentalWarning --loader ts-node/esm",
+    "cli:import": "npm run build && node ./dist/main.cli.js --import ./mocks/mock-data.tsv",
     "mock:server": "json-server ./mocks/mock-server-data.json --port 3123 --host localhost",
     "mock:generate:tsv": "npm run ts ./src/main.cli.ts -- --generate 10000 ./mocks/test-data.tsv http://localhost:3123/api"
   },
