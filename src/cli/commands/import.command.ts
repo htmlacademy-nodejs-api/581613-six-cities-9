@@ -4,6 +4,8 @@ import { Offer } from '../../shared/types/offer.type.js';
 import { getErrorMessage } from '../../shared/helpers/index.js';
 
 export class ImportCommand implements Command {
+  public readonly name = '--import';
+
   private onImportedOffer(offer: Offer): void {
     console.info(offer);
   }
@@ -12,9 +14,7 @@ export class ImportCommand implements Command {
     console.info(`${count} rows imported.`);
   }
 
-  public readonly name = '--import';
-
-  public async execute(...parameters: string[]): Promise<void> {
+  public execute(...parameters: string[]): void {
     const [filename] = parameters;
     const fileReader = new TSVFileReader(filename.trim());
 
