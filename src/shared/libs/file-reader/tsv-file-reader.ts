@@ -50,7 +50,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       features: this.parseFeatures(features),
       author,
       commentsCount: Number(commentsCount),
-      coordinates: this.parseCoordinates(coordinates)
+      coordinates: this.parseCoordinates(coordinates),
     };
   }
 
@@ -88,7 +88,10 @@ export class TSVFileReader extends EventEmitter implements FileReader {
         remainingData = remainingData.slice(++nextLinePosition);
         importedRowCount++;
         const parsedOffer = this.parseLineToOffer(completeRow);
-        this.emit('line', parsedOffer);
+
+        await new Promise((resolve) => {
+          this.emit('line', parsedOffer, resolve);
+        });
       }
     }
 
