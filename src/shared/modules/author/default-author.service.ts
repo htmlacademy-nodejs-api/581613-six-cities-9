@@ -14,8 +14,9 @@ export class DefaultAuthorService implements AuthorService {
     @inject(Component.AuthorModel) private readonly authorModel: types.ModelType<AuthorEntity>
   ) {}
 
-  public async create(dto: CreateAuthorDto): Promise<DocumentType<AuthorEntity>> {
+  public async create(dto: CreateAuthorDto, salt: string): Promise<DocumentType<AuthorEntity>> {
     const user = new AuthorEntity(dto);
+    user.setPassword(dto.password, salt);
 
     const result = await this.authorModel.create(user);
     this.logger.info(`New user created: ${user.email}`);
@@ -31,9 +32,9 @@ export class DefaultAuthorService implements AuthorService {
     return this.authorModel.findOne({id});
   }
 
-  public async findByEmailOrCreate(dto: CreateAuthorDto): Promise<DocumentType<AuthorEntity>> {
+  public async findByEmailOrCreate(dto: CreateAuthorDto, salt: string): Promise<DocumentType<AuthorEntity>> {
     const author = await this.findByEmail(dto.email);
 
-    return author ?? this.create(dto);
+    return author ?? this.create(dto, salt);
   }
 }

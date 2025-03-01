@@ -1,6 +1,7 @@
 import { defaultClasses, getModelForClass, prop, modelOptions } from '@typegoose/typegoose';
 
 import { Author } from '../../types/index.js';
+import { createSHA256 } from '../../helpers/index.js';
 
 @modelOptions({
   schemaOptions: {
@@ -28,11 +29,19 @@ export class AuthorEntity extends defaultClasses.TimeStamps implements Author {
   @prop({ required: false, default: '' })
   public avatar: string;
 
-  @prop({ required: true })
+  @prop({ required: true, default: '' })
   public password: string;
 
   @prop({ required: true })
   public isPro: boolean;
+
+  public setPassword(password: string, salt: string) {
+    this.password = createSHA256(password, salt);
+  }
+
+  public getPassword() {
+    return this.password;
+  }
 }
 
 export const AuthorModel = getModelForClass(AuthorEntity);
