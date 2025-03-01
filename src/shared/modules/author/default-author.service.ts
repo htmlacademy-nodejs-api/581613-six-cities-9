@@ -31,13 +31,9 @@ export class DefaultAuthorService implements AuthorService {
     return this.authorModel.findOne({id});
   }
 
-  public async findOrCreate(dto: CreateAuthorDto): Promise<DocumentType<AuthorEntity>> {
-    const existedAuthor = await this.findByEmail(dto.email);
+  public async findByEmailOrCreate(dto: CreateAuthorDto): Promise<DocumentType<AuthorEntity>> {
+    const author = await this.findByEmail(dto.email);
 
-    if (existedAuthor) {
-      return existedAuthor;
-    }
-
-    return this.create(dto);
+    return author ?? this.create(dto);
   }
 }

@@ -5,6 +5,6 @@ import { CreateOfferDto } from './dto/create-offer.dto.js';
 
 export interface OfferService {
   create(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>>;
-  findOfferByTitle(title: string): Promise<DocumentType<OfferEntity> | null>;
-  findOrCreate(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>>;
+  findByTitle(title: string): Promise<DocumentType<OfferEntity> | null>;
+  findByTitleOrCreate(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>>;
 }

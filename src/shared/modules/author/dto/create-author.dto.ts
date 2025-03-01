@@ -3,5 +3,5 @@ export class CreateAuthorDto {
   public email: string;
   public avatar: string;
   public password: string;
-  public type: boolean;
+  public isPro: boolean;
 }

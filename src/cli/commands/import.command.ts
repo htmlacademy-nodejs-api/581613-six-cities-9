@@ -2,25 +2,20 @@ import { Command } from './command.interface.js';
 import { TSVFileReader } from '../../shared/libs/file-reader/index.js';
 import { Offer } from '../../shared/types/offer.type.js';
 import { getErrorMessage, getMongoURI } from '../../shared/helpers/index.js';
-import { DefaultOfferService, OfferModel, OfferService } from '../../shared/modules/offer/index.js';
-import { DatabaseClient, MongoDatabaseClient } from '../../shared/libs/database-client/index.js';
+import { DefaultOfferService, OfferModel } from '../../shared/modules/offer/index.js';
+import { MongoDatabaseClient } from '../../shared/libs/database-client/index.js';
 import { PinoLogger } from '../../shared/libs/logger/pino.logger.js';
-import { Logger } from '../../shared/libs/logger/index.js';
 import { DEFAULT_DB_PORT } from './command.constant.js';
 
 export class ImportCommand implements Command {
   public readonly name = '--import';
-  private offerService: OfferService;
-  private databaseClient: DatabaseClient;
-  private logger: Logger;
+  private logger = new PinoLogger();
+  private offerService = new DefaultOfferService(this.logger, OfferModel);
+  private databaseClient = new MongoDatabaseClient(this.logger);
 
   constructor() {
     this.onImportedOffer = this.onImportedOffer.bind(this);
     this.onCompleteImport = this.onCompleteImport.bind(this);
-
-    this.logger = new PinoLogger();
-    this.offerService = new DefaultOfferService(this.logger, OfferModel);
-    this.databaseClient = new MongoDatabaseClient(this.logger);
   }
 
   private async onImportedOffer(offer: Offer, resolve: () => void): Promise<void> {

@@ -3,5 +3,5 @@ export type Author = {
   email: string;
   avatar: string;
   password: string;
-  type: boolean
+  isPro: boolean
 }

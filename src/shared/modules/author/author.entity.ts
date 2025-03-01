@@ -16,7 +16,7 @@ export class AuthorEntity extends defaultClasses.TimeStamps implements Author {
     this.name = userData.name;
     this.avatar = userData.avatar;
     this.password = userData.password;
-    this.type = userData.type;
+    this.isPro = userData.isPro;
   }
 
   @prop({ required: true, unique: true })
@@ -32,7 +32,7 @@ export class AuthorEntity extends defaultClasses.TimeStamps implements Author {
   public password: string;
 
   @prop({ required: true })
-  public type: boolean;
+  public isPro: boolean;
 }
 
 export const AuthorModel = getModelForClass(AuthorEntity);

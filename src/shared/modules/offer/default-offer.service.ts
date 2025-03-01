@@ -21,17 +21,13 @@ export class DefaultOfferService implements OfferService {
     return result;
   }
 
-  public async findOfferByTitle(title: string): Promise<DocumentType<OfferEntity> | null> {
+  public async findByTitle(title: string): Promise<DocumentType<OfferEntity> | null> {
     return this.offerModel.findOne({ title }).exec();
   }
 
-  public async findOrCreate(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>> {
-    const existedOffer = await this.findOfferByTitle(dto.title);
+  public async findByTitleOrCreate(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>> {
+    const offer = await this.findByTitle(dto.title);
 
-    if (existedOffer) {
-      return existedOffer;
-    }
-
-    return this.create(dto);
+    return offer ?? this.create(dto);
   }
 }

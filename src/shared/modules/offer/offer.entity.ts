@@ -34,7 +34,7 @@ export class OfferEntity extends defaultClasses.TimeStamps implements Offer {
   @prop({ required: false, default: false })
   public premium: boolean;
 
-  @prop({ required: false, default: false })
+  @prop({ required: false })
   public rating: number;
 
   @prop({ required: true })
@@ -71,7 +71,7 @@ export class OfferEntity extends defaultClasses.TimeStamps implements Offer {
   public coordinates: Coordinates;
 
   @prop({ default: 0 })
-  public commentCount!: number;
+  public commentsCount: number;
 }
 
 export const OfferModel = getModelForClass(OfferEntity);
