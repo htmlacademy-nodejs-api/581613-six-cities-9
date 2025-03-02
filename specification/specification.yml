@@ -1,0 +1,616 @@
+openapi: '3.0.3'
+info:
+  title: API сервер для учебного проекта «Шесть городов».
+  description: |-
+    * Список ресурсов и маршрутов сервера «Шесть городов».
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 2.0.0
+tags:
+  - name: offers
+    description: Действия с предложениями по аренде.
+  - name: users
+    description: Действия с пользователем.
+  - name: comments
+    description: Действия с комментариями.
+
+paths:
+  /users/register:
+    post:
+      tags:
+        - users
+      summary: Регистрация пользователя
+      description: Регистрирует нового пользователя.
+
+      requestBody:
+        description: Информация для создания нового пользователя.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createUser"
+        required: true
+
+      responses:
+        "201":
+          description: Пользователь зарегистрирован. Объект пользователя.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+
+        "409":
+          description: Пользователь с таким email уже существует.
+
+  /users/login:
+    post:
+      tags:
+        - users
+      summary: Авторизация пользователя
+      description: Авторизует пользователя на основе логина и пароля
+
+      requestBody:
+        description: Информация для авторизации нового пользователя.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/authorizeUser"
+        required: true
+
+      responses:
+        "200":
+          description: Пользователь авторизован. Объект пользователя.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+
+        "401":
+          description: Авторизация не пройдена. Проверьте корректность данных
+
+    get:
+      tags:
+        - users
+      summary: Проверка состояния пользователя
+      description: Возвращает информацию по авторизованному пользователю
+
+      requestBody:
+        description: Данные для получения данных о состоянии пользователя.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/authorizeUser"
+        required: true
+
+      responses:
+        "200":
+          description: Пользователь авторизован. Объект пользователя.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+
+        "404":
+          description: Запрошенный пользователь не существует
+
+  /users/logout:
+    post:
+      tags:
+        - users
+      summary: Завершение сессии для пользователя
+      description: Завершает пользовательскую сессию для авторизованного пользователя
+
+      requestBody:
+        description: Данные об авторизованном пользователе.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/logoutUser"
+        required: true
+
+      responses:
+        "200":
+          description: Сессия успешно завершена
+
+        "401":
+          description: Пользователь не авторизован
+
+        "404":
+          description: Сессия не может быть завершена, указанный пользователь не существует
+
+  /users/{userId}/avatar:
+    post:
+      tags:
+        - users
+      summary: Загрузить изображение аватара
+      description: Загружает изображение аватара пользователя. Изображение
+        аватара должно быть в формате `png` или `jpg`.
+      responses:
+        "201":
+          description: Аватар пользователя успешно загружен
+
+        "500":
+          description: Файл неверного формата
+
+    put:
+      tags:
+        - users
+      summary: Обновить изображение аватара
+      description: Обновляет изображение аватара пользователя. Изображение
+        аватара должно быть в формате `png` или `jpg`.
+      responses:
+        "204":
+          description: Аватр пользователя успешно загружен
+
+        "500":
+          description: Файл неверного формата
+
+  /offers:
+    get:
+      tags:
+        - offers
+      summary: Список предложение по аренде
+      description: Предоставляет список предложений по аренде
+
+      parameters:
+        - in: query
+          name: count
+          schema:
+            type: number
+            example: 200
+
+      responses:
+        "200":
+          description: Список предложений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/offer"
+
+    post:
+      tags:
+        - offers
+      summary: Создание нового предложения по аренде
+      description: Создает новое предложение по аренде
+
+      requestBody:
+        description: Данные об объекте
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createOffer"
+        required: true
+
+      responses:
+        "201":
+          description: Предложение успешно создано
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/offer"
+
+        "400":
+          description: Не все обязательные данные переданы, или переданы некорректно
+
+        "401":
+          description: Создавать предложения могут только авторизованные пользователи
+
+  /offers/{offerId}:
+    get:
+      tags:
+        - offers
+      summary: Детальная информация о предложении по аренде
+      description: Предоставляет детальная информацию о предложении по аренде
+
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Информация о предложении по аренде
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/offer"
+
+    patch:
+      tags:
+        - offers
+      summary: Обновление информации предложения по аренде
+      description: Обновляет предложение по аренде
+
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: string
+
+      requestBody:
+        description: Данные об объекте
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/updateOffer"
+        required: true
+
+      responses:
+        "200":
+          description: Предложение успешно обновлено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/offer"
+
+        "400":
+          description: Не все обязательные данные переданы, или переданы некорректно
+
+        "401":
+          description: Редактировать предложения могут только авторизованные пользователи
+
+        "403":
+          description: Редактировать предложения другого пользователя не разрешено
+
+    delete:
+      tags:
+        - offers
+      summary: Удаление предложения по аренде
+      description: Удаляет предложение по аренде
+
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "204":
+          description: Предложение успешно удалено
+
+        "401":
+          description: Удалять предложения могут только авторизованные пользователи
+
+        "403":
+          description: Удалять предложения другого пользователя не разрешено
+
+  /comments:
+    get:
+      tags:
+        - comments
+      summary: Список комментариев о предложении по аренде
+      description: Предоставляет список комментариев о предложении по аренде
+
+      parameters:
+        - in: query
+          name: offerId
+          schema:
+            type: string
+            example: '32d3sdq12'
+
+      responses:
+        "200":
+          description: Список комментариев для предложения
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/comment"
+
+    post:
+      tags:
+        - comments
+      summary: Создание нового комментария о предложении об аренде
+      description: Создает новый комментария о предложении об аренде
+
+      requestBody:
+        description: Данные комментария
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createComment"
+        required: true
+
+      responses:
+        "201":
+          description: Комментарий успешно создан
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/comment"
+
+        "400":
+          description: Не все обязательные данные переданы, или переданы некорректно
+
+        "401":
+          description: Создавать предложения могут только авторизованные пользователи
+
+components:
+  schemas:
+    createUser:
+      type: object
+
+      properties:
+        email:
+          type: string
+          example: keks@htmlacademy.ru
+
+        firstname:
+          type: string
+          example: Keks
+
+        lastname:
+          type: string
+          example: Cat
+
+        password:
+          type: string
+          example: 123456
+
+    authorizeUser:
+      type: object
+
+      properties:
+        email:
+          type: string
+          example: keks@htmlacademy.ru
+
+        password:
+          type: string
+          example: 123456
+
+    user:
+      type: object
+
+      properties:
+        email:
+          type: string
+          example: keks@htmlacademy.ru
+
+        firstname:
+          type: string
+          example: Keks
+
+        lastname:
+          type: string
+          example: Cat
+
+    logoutUser:
+      type: object
+
+      properties:
+        email:
+          type: string
+          example: keks@htmlacademy.ru
+
+    createOffer:
+      type: object
+
+      properties:
+        title:
+          type: string
+          example: Cozy apartments
+
+        description:
+          type: string
+          example: Cozy apartments in city center
+
+        postDate:
+          type: string
+          example: 11.11.2020
+
+        city:
+          type: string
+          example: Paris
+
+        previewImage:
+          type: string
+          example: image-1.jpg
+
+        images:
+          type: array
+          example: [image-1.jpg, image-2.jpg]
+
+        premium:
+          type: boolean
+          example: false
+
+        type:
+          type: string
+          example: apartment
+
+        roomsCount:
+          type: number
+          example: 2
+
+        guestsCount:
+          type: number
+          example: 2
+
+        price:
+          type: number
+          example: 2000
+
+        features:
+          type: array
+          example: [Breakfast, Washer]
+
+        author:
+          type: string
+          example: example@user.ru
+
+        coordinates:
+          type: object
+          example: {  latitude: 22.4432, longitude: 12.4432 }
+
+    updateOffer:
+      type: object
+
+      properties:
+        id:
+          type: string
+          example: xz1232feszgeg
+
+        title:
+          type: string
+          example: Cozy apartments
+
+        description:
+          type: string
+          example: Cozy apartments in city center
+
+        postDate:
+          type: string
+          example: 11.11.2020
+
+        city:
+          type: string
+          example: Paris
+
+        previewImage:
+          type: string
+          example: image-1.jpg
+
+        images:
+          type: array
+          example: [image-1.jpg, image-2.jpg]
+
+        premium:
+          type: boolean
+          example: false
+
+        type:
+          type: string
+          example: apartment
+
+        roomsCount:
+          type: number
+          example: 2
+
+        guestsCount:
+          type: number
+          example: 2
+
+        price:
+          type: number
+          example: 2000
+
+        features:
+          type: array
+          example: [Breakfast, Washer]
+
+        author:
+          type: string
+          example: example@user.ru
+
+        coordinates:
+          type: object
+          example: {  latitude: 22.4432, longitude: 12.4432 }
+
+    offer:
+      type: object
+
+      properties:
+        title:
+          type: string
+          example: Cozy apartments
+
+        description:
+          type: string
+          example: Cozy apartments in city center
+
+        postDate:
+          type: string
+          example: 11.11.2020
+
+        city:
+          type: string
+          example: Paris
+
+        previewImage:
+          type: string
+          example: image-1.jpg
+
+        images:
+          type: array
+          example: [image-1.jpg, image-2.jpg]
+
+        premium:
+          type: boolean
+          example: false
+
+        type:
+          type: string
+          example: apartment
+
+        roomsCount:
+          type: number
+          example: 2
+
+        guestsCount:
+          type: number
+          example: 2
+
+        price:
+          type: number
+          example: 2000
+
+        features:
+          type: array
+          example: [Breakfast, Washer]
+
+        author:
+          type: string
+          example: example@user.ru
+
+        coordinates:
+          type: object
+          example: {  latitude: 22.4432, longitude: 12.4432 }
+
+        rating:
+          type: number
+          example: 0
+
+        commentsCount:
+          type: number
+          example: 0
+
+    comment:
+      type: object
+
+      properties:
+        text:
+          type: string
+          example: Very wonderful apartments
+
+        postDate:
+          type: string
+          example: 11.11.2020
+
+        rating:
+          type: number
+          example: 2
+
+        author:
+          type: string
+          example: ji@jiji.ru
+
+    createComment:
+      type: object
+
+      properties:
+        text:
+          type: string
+          example: Very wonderful apartments
+
+        author:
+          type: string
+          example: ji@jiji.ru
+
