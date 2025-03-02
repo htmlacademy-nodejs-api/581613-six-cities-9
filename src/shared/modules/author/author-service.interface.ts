@@ -8,4 +8,6 @@ export interface AuthorService {
   findByEmail(email: string): Promise<DocumentType<AuthorEntity> | null>;
   findById(id: string): Promise<DocumentType<AuthorEntity> | null>;
   findByEmailOrCreate(dto: CreateAuthorDto, salt: string): Promise<DocumentType<AuthorEntity>>;
+  addFavouriteOffer(userId: string, offerId: string): Promise<DocumentType<AuthorEntity> | null>;
+  deleteFavouriteOffer(userId: string, offerId: string): Promise<DocumentType<AuthorEntity> | null>;
 }

@@ -35,6 +35,9 @@ export class AuthorEntity extends defaultClasses.TimeStamps implements Author {
   @prop({ required: true })
   public isPro: boolean;
 
+  @prop({ required: false })
+  public favourites: string[];
+
   public setPassword(password: string, salt: string) {
     this.password = createSHA256(password, salt);
   }

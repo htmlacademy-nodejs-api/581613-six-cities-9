@@ -12,7 +12,7 @@ export class DefaultAuthorService implements AuthorService {
   constructor(
     @inject(Component.Logger) private readonly logger: Logger,
     @inject(Component.AuthorModel) private readonly authorModel: types.ModelType<AuthorEntity>
-  ) {}
+  ) { }
 
   public async create(dto: CreateAuthorDto, salt: string): Promise<DocumentType<AuthorEntity>> {
     const user = new AuthorEntity(dto);
@@ -25,16 +25,32 @@ export class DefaultAuthorService implements AuthorService {
   }
 
   public async findByEmail(email: string): Promise<DocumentType<AuthorEntity> | null> {
-    return this.authorModel.findOne({email});
+    return this.authorModel.findOne({ email });
   }
 
   public async findById(id: string): Promise<DocumentType<AuthorEntity> | null> {
-    return this.authorModel.findOne({id});
+    return this.authorModel.findOne({ id });
   }
 
   public async findByEmailOrCreate(dto: CreateAuthorDto, salt: string): Promise<DocumentType<AuthorEntity>> {
     const author = await this.findByEmail(dto.email);
 
     return author ?? this.create(dto, salt);
+  }
+
+  public async addFavouriteOffer(userId: string, offerId: string): Promise<DocumentType<AuthorEntity> | null> {
+    return this.authorModel.findByIdAndUpdate(userId, {
+      '$push': {
+        favourites: offerId,
+      },
+    });
+  }
+
+  public async deleteFavouriteOffer(userId: string, offerId: string): Promise<DocumentType<AuthorEntity> | null> {
+    return this.authorModel.findByIdAndUpdate(userId, {
+      '$pull': {
+        favourites: offerId,
+      },
+    });
   }
 }
