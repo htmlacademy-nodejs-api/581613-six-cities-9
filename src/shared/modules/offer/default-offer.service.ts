@@ -65,7 +65,7 @@ export class DefaultOfferService implements OfferService {
   public async updateRating(id: string, rating: number): Promise<DocumentType<OfferEntity> | null> {
     const offer = await this.offerModel.findById(id);
 
-    const newRating = ((Number(offer?.rating) + rating) / NUMBER_HALF_SEPARATOR).toFixed(RATING_DECIMAL_PLACES_NUMBER);
+    const newRating = offer?.rating ? ((Number(offer?.rating) + rating) / NUMBER_HALF_SEPARATOR).toFixed(RATING_DECIMAL_PLACES_NUMBER) : rating;
 
     return this.offerModel
       .findByIdAndUpdate(id, { ...offer, rating: newRating }, { new: true })

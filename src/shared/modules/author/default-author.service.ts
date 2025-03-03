@@ -38,17 +38,9 @@ export class DefaultAuthorService implements AuthorService {
     return author ?? this.create(dto, salt);
   }
 
-  public async addFavouriteOffer(userId: string, offerId: string): Promise<DocumentType<AuthorEntity> | null> {
+  public async changeFavouriteOffer(userId: string, offerId: string, isDelete: boolean): Promise<DocumentType<AuthorEntity> | null> {
     return this.authorModel.findByIdAndUpdate(userId, {
-      '$push': {
-        favourites: offerId,
-      },
-    });
-  }
-
-  public async deleteFavouriteOffer(userId: string, offerId: string): Promise<DocumentType<AuthorEntity> | null> {
-    return this.authorModel.findByIdAndUpdate(userId, {
-      '$pull': {
+      [isDelete ? '$pull' : '$push']: {
         favourites: offerId,
       },
     });
