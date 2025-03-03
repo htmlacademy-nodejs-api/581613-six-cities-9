@@ -1,3 +1,5 @@
+import { ClassConstructor, plainToInstance } from 'class-transformer';
+
 import { COMMA_SEPARATOR, DEFAULT_ERROR_MESAGE } from '../constants/index.js';
 
 export function generateRandomValue(min: number, max: number, numAfterDigit = 0) {
@@ -26,4 +28,8 @@ export function getRandomBoolean(): boolean {
 
 export function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : DEFAULT_ERROR_MESAGE;
+}
+
+export function fillDTO<T, V>(someDto: ClassConstructor<T>, plainObject: V) {
+  return plainToInstance(someDto, plainObject, { excludeExtraneousValues: true });
 }

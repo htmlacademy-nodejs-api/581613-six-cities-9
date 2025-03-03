@@ -2,6 +2,7 @@ import { defaultClasses, getModelForClass, prop, modelOptions } from '@typegoose
 
 import { Author } from '../../types/index.js';
 import { createSHA256 } from '../../helpers/index.js';
+import mongoose from 'mongoose';
 
 @modelOptions({
   schemaOptions: {
@@ -35,8 +36,8 @@ export class AuthorEntity extends defaultClasses.TimeStamps implements Author {
   @prop({ required: true })
   public isPro: boolean;
 
-  @prop({ required: false })
-  public favourites: string[];
+  @prop({ required: false, type: String })
+  public favourites: mongoose.Types.Array<string>;
 
   public setPassword(password: string, salt: string) {
     this.password = createSHA256(password, salt);

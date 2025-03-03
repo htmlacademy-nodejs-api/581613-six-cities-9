@@ -6,7 +6,6 @@ import { OfferType } from './offer-type.enum.js';
 export type Offer = {
   title: string;
   description: string;
-  postDate: Date;
   city: City;
   previewImage: string;
   images: string[];
@@ -20,4 +19,5 @@ export type Offer = {
   author: string;
   coordinates: Coordinates
   commentsCount?: number;
+  postDate?: Date;
 }
