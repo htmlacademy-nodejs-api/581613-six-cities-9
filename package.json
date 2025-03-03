@@ -11,7 +11,7 @@
   "scripts": {
     "start": "npm run build && node ./dist/main.js",
     "build": "npm run clean && npm run compile",
-    "lint": "eslint src/ --ext .ts",
+    "lint": "eslint src/ --ext .ts --fix",
     "compile": "tsc -p tsconfig.json",
     "clean": "rimraf dist",
     "ts": "tsc --noEmit && node --no-warnings=--no-warnings=ExperimentalWarning --loader ts-node/esm",

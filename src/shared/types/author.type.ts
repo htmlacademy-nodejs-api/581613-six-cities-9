@@ -3,5 +3,6 @@ export type Author = {
   email: string;
   avatar: string;
   password: string;
-  isPro: boolean
+  isPro: boolean;
+  favourites?: string[]
 }

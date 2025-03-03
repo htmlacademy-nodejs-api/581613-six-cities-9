@@ -1,0 +1,4 @@
+export const NUMBER_HALF_SEPARATOR = 2;
+export const RATING_DECIMAL_PLACES_NUMBER = 1;
+export const COMMENTS_INCREMENT = 1;
+export const COMMENTS_DECREMENT = -1;
