@@ -42,8 +42,7 @@ export class DefaultOfferService implements OfferService {
   }
 
   public async delete(id: string): Promise<DocumentType<OfferEntity> | null> {
-    return this.offerModel.findByIdAndDelete(id)
-      .exec();
+    return this.offerModel.findByIdAndDelete(id);
   }
 
   public async update(id: string, dto: UpdateOfferDto): Promise<DocumentType<OfferEntity> | null> {

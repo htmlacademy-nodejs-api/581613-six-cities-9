@@ -29,7 +29,7 @@ export class DefaultAuthorService implements AuthorService {
   }
 
   public async findById(id: string): Promise<DocumentType<AuthorEntity> | null> {
-    return this.authorModel.findOne({ id });
+    return this.authorModel.findById(id);
   }
 
   public async findByEmailOrCreate(dto: CreateAuthorDto, salt: string): Promise<DocumentType<AuthorEntity>> {
@@ -43,6 +43,6 @@ export class DefaultAuthorService implements AuthorService {
       [isDelete ? '$pull' : '$push']: {
         favourites: offerId,
       },
-    });
+    }, { new: true});
   }
 }

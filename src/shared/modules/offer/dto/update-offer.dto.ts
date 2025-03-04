@@ -1,7 +1,6 @@
 import { FeatureType } from '../../../types/features.enum.js';
 import { OfferType } from '../../../types/offer-type.enum.js';
 
-// TODO: можно ли изменить координаты и город?
 export class UpdateOfferDto {
   public title?: string;
   public description?: string;

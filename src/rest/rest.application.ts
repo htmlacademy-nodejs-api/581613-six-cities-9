@@ -6,7 +6,7 @@ import { Config, RestSchema } from '../shared/libs/config/index.js';
 import { Component } from '../shared/types/index.js';
 import { DatabaseClient } from '../shared/libs/database-client/index.js';
 import { getMongoURI } from '../shared/helpers/index.js';
-import { Controller } from '../shared/libs/rest/index.js';
+import { Controller, ExceptionFilter } from '../shared/libs/rest/index.js';
 
 @injectable()
 export class RestApplication {
@@ -18,6 +18,7 @@ export class RestApplication {
     @inject(Component.DatabaseClient) private readonly databaseClient: DatabaseClient,
     @inject(Component.OfferController) private readonly offerController: Controller,
     @inject(Component.AuthorController) private readonly userController: Controller,
+    @inject(Component.ExceptionFilter) private readonly appExceptionFilter: ExceptionFilter,
   ) { }
 
   private async initDb() {
@@ -36,7 +37,7 @@ export class RestApplication {
   }
 
   private async initServer() {
-    this.logger.info('Try to init server…');
+    this.logger.info('Try to init server');
     const port = this.config.get('PORT');
     this.server.listen(port);
     this.logger.info(
@@ -44,8 +45,16 @@ export class RestApplication {
     );
   }
 
+  private async initExceptionFilters() {
+    this.logger.info('Init exception filters');
+    this.server.use(this.appExceptionFilter.catch.bind(this.appExceptionFilter));
+    this.logger.info('Exception filters initialization compleated');
+  }
+
   private async initMiddleware() {
+    this.logger.info('Init app-level middleware');
     this.server.use(express.json());
+    this.logger.info('App-level middleware initialization completed');
   }
 
   private async initControllers() {
@@ -64,6 +73,7 @@ export class RestApplication {
     await this.initDb();
     await this.initMiddleware();
     await this.initControllers();
+    await this.initExceptionFilters();
     await this.initServer();
   }
 }
