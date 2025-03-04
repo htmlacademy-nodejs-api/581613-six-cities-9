@@ -74,13 +74,12 @@ paths:
       summary: Проверка состояния пользователя
       description: Возвращает информацию по авторизованному пользователю
 
-      requestBody:
-        description: Данные для получения данных о состоянии пользователя.
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/authorizeUser"
-        required: true
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: string
+            example: 'assad32'
 
       responses:
         "200":
@@ -117,33 +116,6 @@ paths:
 
         "404":
           description: Сессия не может быть завершена, указанный пользователь не существует
-
-  /users/{userId}/avatar:
-    post:
-      tags:
-        - users
-      summary: Загрузить изображение аватара
-      description: Загружает изображение аватара пользователя. Изображение
-        аватара должно быть в формате `png` или `jpg`.
-      responses:
-        "201":
-          description: Аватар пользователя успешно загружен
-
-        "500":
-          description: Файл неверного формата
-
-    put:
-      tags:
-        - users
-      summary: Обновить изображение аватара
-      description: Обновляет изображение аватара пользователя. Изображение
-        аватара должно быть в формате `png` или `jpg`.
-      responses:
-        "204":
-          description: Аватр пользователя успешно загружен
-
-        "500":
-          description: Файл неверного формата
 
   /offers:
     get:
@@ -289,7 +261,6 @@ paths:
 
         "401":
           description: Список избранных предложений доступен только для авторизованных пользователей
-
 
   /offers/{offerId}:
     get:
