@@ -1,7 +1,7 @@
 import { defaultClasses, getModelForClass, prop, modelOptions } from '@typegoose/typegoose';
 
 import { City, Coordinates, FeatureType, Offer, OfferType } from '../../types/index.js';
-import { AuthorEntity } from '../author/author.entity.js';
+import { UserEntity } from '../user/user.entity.js';
 
 @modelOptions({
   schemaOptions: {
@@ -15,9 +15,6 @@ export class OfferEntity extends defaultClasses.TimeStamps implements Offer {
 
   @prop({ required: true })
   public description: string;
-
-  @prop({ required: true })
-  public postDate: Date;
 
   @prop({
     type: () => String,
@@ -44,12 +41,12 @@ export class OfferEntity extends defaultClasses.TimeStamps implements Offer {
   public guestsCount: number;
 
   @prop({
-    ref: AuthorEntity,
+    ref: UserEntity,
     required: true,
     default: {},
     _id: false
   })
-  public author: string;
+  public user: string;
 
   @prop({ required: true })
   public price: number;

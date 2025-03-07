@@ -40,14 +40,14 @@ export class TSVOfferGenerator implements OfferGenerator {
     const guestsCount = generateRandomValue(MIN_GUESTS, MAX_GUESTS);
     const price = generateRandomValue(MIN_PRICE, MAX_PRICE);
     const features = getRandomItemsToStringWithSeparator(this.mockData.features);
-    const author = getRandomItem(this.mockData.authors);
+    const user = getRandomItem(this.mockData.users);
     const commentsCount = generateRandomValue(MIN_COMMENTS, MAX_COMMENTS);
     const latitude = generateRandomValue(MIN_COORDS_LATTITUDE, MAX_COORDS_LATTITUDE, MAX_COORDS_NUM_AFTER_DIGIT);
     const longitude = generateRandomValue(MIN_COORDS_LONGITUDE, MAX_COORDS_LONGITUDE, MAX_COORDS_NUM_AFTER_DIGIT);
     const coordinates = generateStringWithSeparatorFromArray([latitude, longitude]);
 
     return [
-      title, description, createdDate, city, previewImage, images, premium, rating, type, roomsCount, guestsCount, price, features, author, commentsCount, coordinates
+      title, description, createdDate, city, previewImage, images, premium, rating, type, roomsCount, guestsCount, price, features, user, commentsCount, coordinates
     ].join(TAB_SEPARATOR);
   }
 }

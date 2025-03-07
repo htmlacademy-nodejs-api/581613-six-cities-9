@@ -1,8 +1,8 @@
-export type Author = {
+export type User = {
   name: string;
   email: string;
-  avatar: string;
   password: string;
   isPro: boolean;
+  avatar?: string;
   favourites?: string[]
 }

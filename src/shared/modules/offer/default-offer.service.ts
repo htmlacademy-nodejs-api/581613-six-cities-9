@@ -28,7 +28,7 @@ export class DefaultOfferService implements OfferService {
   }
 
   public async findById(id: string): Promise<DocumentType<OfferEntity> | null> {
-    return this.offerModel.findById(id).populate(['author']).exec();
+    return this.offerModel.findById(id).populate(['user']).exec();
   }
 
   public async findByTitleOrCreate(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>> {
@@ -42,14 +42,13 @@ export class DefaultOfferService implements OfferService {
   }
 
   public async delete(id: string): Promise<DocumentType<OfferEntity> | null> {
-    return this.offerModel.findByIdAndDelete(id)
-      .exec();
+    return this.offerModel.findByIdAndDelete(id);
   }
 
   public async update(id: string, dto: UpdateOfferDto): Promise<DocumentType<OfferEntity> | null> {
     return this.offerModel
       .findByIdAndUpdate(id, dto, { new: true })
-      .populate(['author'])
+      .populate(['user'])
       .exec();
   }
 
@@ -69,7 +68,7 @@ export class DefaultOfferService implements OfferService {
 
     return this.offerModel
       .findByIdAndUpdate(id, { ...offer, rating: newRating }, { new: true })
-      .populate(['author'])
+      .populate(['user'])
       .exec();
   }
 

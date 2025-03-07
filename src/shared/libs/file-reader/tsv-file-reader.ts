@@ -29,7 +29,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       guestsCount,
       price,
       features,
-      author,
+      user,
       commentsCount,
       coordinates
     ] = line.split(TAB_SEPARATOR);
@@ -48,7 +48,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       guestsCount: Number(guestsCount),
       price: Number(price),
       features: this.parseFeatures(features),
-      author,
+      user,
       commentsCount: Number(commentsCount),
       coordinates: this.parseCoordinates(coordinates),
     };

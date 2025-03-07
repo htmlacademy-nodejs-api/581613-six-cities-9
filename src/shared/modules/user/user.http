@@ -1,0 +1,44 @@
+# Пользователи
+## Создать нового пользователя
+
+POST http://localhost:3000/users/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "67c73ae2be6a11f4f1c09d8f",
+  "email": "67c13ae2be6a51f4f1c09d8f",
+  "password": "string",
+  "isPro": false,
+  "avatar": "string"
+}
+
+###
+## Авторизация пользователя
+
+POST http://localhost:3000/users/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "string",
+  "password": "string"
+}
+
+###
+
+## Проверка состояния пользователя
+
+GET http://localhost:3000/users/login/?userId=67c73ae2be6a51f4f1c09d8f HTTP/1.1
+Content-Type: application/json
+
+###
+
+## Конец сессии пользователя
+
+POST http://localhost:3000/users/logout HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "string"
+}
+
+###

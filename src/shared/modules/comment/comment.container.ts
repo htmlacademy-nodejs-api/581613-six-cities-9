@@ -6,7 +6,7 @@ import { DefaultCommentService } from './default-comment.service.js';
 
 export function createCommentContainer() {
   const commentContainer = new Container();
-  commentContainer.bind<CommentService>(Component.AuthorService).to(DefaultCommentService).inSingletonScope();
+  commentContainer.bind<CommentService>(Component.UserService).to(DefaultCommentService).inSingletonScope();
 
   return commentContainer;
 }

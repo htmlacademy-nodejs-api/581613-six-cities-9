@@ -1,0 +1,82 @@
+# Категории
+## Получить список категорий
+GET http://localhost:3000/offers HTTP/1.1
+Content-Type: application/json
+
+###
+
+POST http://localhost:3000/offers HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "dfffefefewewf",
+  "description": "string",
+  "city": "Paris",
+  "previewImage": "string",
+  "images": "['inage']",
+  "premium": "false",
+  "rating": "2",
+  "type": "apartment",
+  "roomsCount": "1",
+  "guestsCount": "2",
+  "price": "123",
+  "features": "Washer",
+  "user": "67c73ae2be6a51f4f1c09d8f",
+  "coordinates": "{ lattitude: 11.2221, longitude: 22.1212 }"
+}
+
+###
+
+GET http://localhost:3000/offers/premium/?city=Hamburg HTTP/1.1
+Content-Type: application/json
+
+###
+
+GET http://localhost:3000/offers/favourites/?userId=67c73ae2be6a51f4f1c09d8f HTTP/1.1
+Content-Type: application/json
+
+###
+
+POST http://localhost:3000/offers/favourites HTTP/1.1
+Content-Type: application/json
+
+{
+  "userId": "67c73ae2be6a51f4f1c09d8f",
+  "offerId": "67c5f2ad111a4e4f1d94bd96"
+}
+
+###
+
+DELETE http://localhost:3000/offers/favourites HTTP/1.1
+Content-Type: application/json
+
+{
+  "userId": "67c73ae2be6a51f4f1c09d8f",
+  "offerId": "67c5f2ad111a4e4f1d94bd96"
+}
+
+
+###
+
+GET http://localhost:3000/offers/67c75f8dc22c303f31935cf4 HTTP/1.1
+Content-Type: application/json
+
+###
+
+###
+
+DELETE http://localhost:3000/offers/67c75f8dc22c303f31935cf4 HTTP/1.1
+Content-Type: application/json
+
+###
+
+###
+
+PATCH http://localhost:3000/offers/67c75f8dc22c303f31935cf4 HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "supervilala"
+}
+
+###

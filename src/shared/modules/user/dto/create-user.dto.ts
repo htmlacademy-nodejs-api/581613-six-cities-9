@@ -1,7 +1,7 @@
-export class CreateAuthorDto {
+export class CreateUserDto {
   public name: string;
   public email: string;
-  public avatar: string;
   public password: string;
   public isPro: boolean;
+  public avatar?: string;
 }
