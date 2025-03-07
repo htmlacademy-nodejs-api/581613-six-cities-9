@@ -10,13 +10,13 @@
   "main": "main.js",
   "scripts": {
     "start": "npm run build && node ./dist/main.js",
+    "start:dev": "nodemon",
     "build": "npm run clean && npm run compile",
     "lint": "eslint src/ --ext .ts --fix",
     "compile": "tsc -p tsconfig.json",
     "clean": "rimraf dist",
     "ts": "tsc --noEmit && node --no-warnings=--no-warnings=ExperimentalWarning --loader ts-node/esm",
     "rest:build": "npm run build && node ./dist/main.rest.js",
-    "rest:dev": "npm run ts ./src/main.rest.ts | pino-pretty --colorize --translateTime SYS:standard",
     "cli:import": "npm run build && node ./dist/main.cli.js --import ./mocks/mock-data.tsv",
     "cli:import:database": "npm run ts ./src/main.cli.ts -- --import ./mocks/mock-data.tsv admin test localhost six-sities",
     "mock:server": "json-server ./mocks/mock-server-data.json --port 3123 --host localhost",
@@ -34,6 +34,7 @@
     "json-server": "^1.0.0-beta.3",
     "pino-pretty": "^13.0.0",
     "rimraf": "5.0.1",
+    "nodemon": "3.1.9",
     "ts-node": "10.9.2",
     "tslib": "^2.8.1",
     "typescript": "5.4.5"

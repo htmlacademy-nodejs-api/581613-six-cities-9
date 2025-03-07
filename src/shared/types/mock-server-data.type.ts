@@ -9,5 +9,5 @@ export type MockServerData = {
   cities: City[];
   offerTypes: OfferType[];
   features: FeatureType[];
-  authors: string[];
+  users: string[];
 };

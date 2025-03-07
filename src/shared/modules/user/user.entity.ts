@@ -1,17 +1,17 @@
 import { defaultClasses, getModelForClass, prop, modelOptions } from '@typegoose/typegoose';
 
-import { Author } from '../../types/index.js';
+import { User } from '../../types/index.js';
 import { createSHA256 } from '../../helpers/index.js';
 import mongoose from 'mongoose';
 
 @modelOptions({
   schemaOptions: {
-    collection: 'authors',
+    collection: 'users',
     timestamps: true,
   }
 })
-export class AuthorEntity extends defaultClasses.TimeStamps implements Author {
-  constructor(userData: Author) {
+export class UserEntity extends defaultClasses.TimeStamps implements User {
+  constructor(userData: User) {
     super();
 
     this.email = userData.email;
@@ -48,4 +48,4 @@ export class AuthorEntity extends defaultClasses.TimeStamps implements Author {
   }
 }
 
-export const AuthorModel = getModelForClass(AuthorEntity);
+export const UserModel = getModelForClass(UserEntity);

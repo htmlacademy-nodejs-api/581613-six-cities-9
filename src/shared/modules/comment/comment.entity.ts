@@ -1,11 +1,11 @@
 import { defaultClasses, getModelForClass, prop, modelOptions } from '@typegoose/typegoose';
 
 import { Comment } from '../../types/index.js';
-import { AuthorEntity } from '../author/author.entity.js';
+import { UserEntity } from '../user/user.entity.js';
 
 @modelOptions({
   schemaOptions: {
-    collection: 'authors',
+    collection: 'users',
     timestamps: true,
   }
 })
@@ -13,19 +13,19 @@ export class CommentEntity extends defaultClasses.TimeStamps implements Comment 
   constructor(commentData: Comment) {
     super();
 
-    this.author = commentData.author;
+    this.user = commentData.user;
     this.date = commentData.date;
     this.text = commentData.text;
     this.rating = commentData.rating;
   }
 
   @prop({
-    ref: AuthorEntity,
+    ref: UserEntity,
     required: true,
     default: {},
     _id: false
   })
-  public author: string;
+  public user: string;
 
   @prop({ required: true })
   public date: Date;

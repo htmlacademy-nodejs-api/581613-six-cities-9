@@ -8,17 +8,17 @@ import { City, Component } from '../../types/index.js';
 import { OfferService } from './offer-service.interface.js';
 import { fillDTO } from '../../helpers/index.js';
 import { OfferRdo } from './rdo/offer.rdo.js';
-import { CreateOfferRequest } from './create-offer-request.type.js';
-import { AuthorService } from '../author/author-service.interface.js';
-import { FavouriteOfferRequest } from './favourite-offer-request.type.js';
-import { UpdateOfferRequest } from './update-offer-request.type.js';
+import { CreateOfferRequest } from './types/create-offer-request.type.js';
+import { UserService } from '../user/user-service.interface.js';
+import { FavouriteOfferRequest } from './types/favourite-offer-request.type.js';
+import { UpdateOfferRequest } from './types/update-offer-request.type.js';
 
 @injectable()
 export class OfferController extends BaseController {
   constructor(
     @inject(Component.Logger) protected readonly logger: Logger,
     @inject(Component.OfferService) private readonly offerService: OfferService,
-    @inject(Component.AuthorService) private readonly authorService: AuthorService,
+    @inject(Component.UserService) private readonly userService: UserService,
   ) {
     super(logger);
 
@@ -54,7 +54,7 @@ export class OfferController extends BaseController {
   }
 
   public async getFavourites({ query }: Request, res: Response): Promise<void> {
-    const user = await this.authorService.findById(query.userId as string);
+    const user = await this.userService.findById(query.userId as string);
 
     if (!user) {
       throw new HttpError(
@@ -70,13 +70,13 @@ export class OfferController extends BaseController {
   }
 
   public async addFavourites({ body }: FavouriteOfferRequest, res: Response): Promise<void> {
-    await this.authorService.changeFavouriteOffer(body.userId, body.offerId, false);
+    await this.userService.changeFavouriteOffer(body.userId, body.offerId, false);
 
     this.okNoContent(res);
   }
 
   public async deleteFavourites({ body }: FavouriteOfferRequest, res: Response): Promise<void> {
-    await this.authorService.changeFavouriteOffer(body.userId, body.offerId, true);
+    await this.userService.changeFavouriteOffer(body.userId, body.offerId, true);
 
     this.okNoContent(res);
   }
@@ -88,7 +88,7 @@ export class OfferController extends BaseController {
       throw new HttpError(
         StatusCodes.NOT_FOUND,
         `Offer with id «${params.offerId}» not found`,
-        'AuthorController',
+        'UserController',
       );
     }
 

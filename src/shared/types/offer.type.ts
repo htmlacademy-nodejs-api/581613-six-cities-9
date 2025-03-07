@@ -16,7 +16,7 @@ export type Offer = {
   guestsCount: number;
   price: number;
   features: FeatureType[];
-  author: string;
+  user: string;
   coordinates: Coordinates
   commentsCount?: number;
   postDate?: Date;

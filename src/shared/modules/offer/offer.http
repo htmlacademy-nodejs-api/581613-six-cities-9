@@ -21,7 +21,7 @@ Content-Type: application/json
   "guestsCount": "2",
   "price": "123",
   "features": "Washer",
-  "author": "67c73ae2be6a51f4f1c09d8f",
+  "user": "67c73ae2be6a51f4f1c09d8f",
   "coordinates": "{ lattitude: 11.2221, longitude: 22.1212 }"
 }
 

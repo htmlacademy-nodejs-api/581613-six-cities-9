@@ -5,8 +5,8 @@ POST http://localhost:3000/users/register HTTP/1.1
 Content-Type: application/json
 
 {
-  "name": "67c73ae2be6a51f4f1c09d8f",
-  "email": "67c73ae2be6a51f4f1c09d8f",
+  "name": "67c73ae2be6a11f4f1c09d8f",
+  "email": "67c13ae2be6a51f4f1c09d8f",
   "password": "string",
   "isPro": false,
   "avatar": "string"

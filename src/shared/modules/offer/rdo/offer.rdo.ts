@@ -45,7 +45,7 @@ export class OfferRdo {
   public features: FeatureType[];
 
   @Expose()
-  public author: string;
+  public user: string;
 
   @Expose()
   public coordinates: Coordinates;
