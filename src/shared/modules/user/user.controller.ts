@@ -24,10 +24,14 @@ export class UserController extends BaseController {
 
     this.logger.info('Register routes for UserController');
 
-    this.addRoute({ path: '/register', method: HttpMethod.Post, handler: this.create });
-    this.addRoute({ path: '/login', method: HttpMethod.Post, handler: this.login });
-    this.addRoute({ path: '/login', method: HttpMethod.Get, handler: this.status });
-    this.addRoute({ path: '/logout', method: HttpMethod.Post, handler: this.logout });
+    const routes = [
+      { path: '/register', method: HttpMethod.Post, handler: this.create },
+      { path: '/login', method: HttpMethod.Post, handler: this.login },
+      { path: '/login', method: HttpMethod.Get, handler: this.status },
+      { path: '/logout', method: HttpMethod.Post, handler: this.logout },
+    ];
+
+    this.addRoute(routes);
   }
 
   public async create({ body }: CreateUserRequest, res: Response): Promise<void> {
@@ -49,21 +53,12 @@ export class UserController extends BaseController {
     { body }: LoginUserRequest,
     res: Response,
   ): Promise<void> {
-    if (!body.password) {
-      throw new HttpError(
-        StatusCodes.UNAUTHORIZED,
-        'Auht failed. password empty',
-        'UserController',
-      );
-
-    }
-
     const existsUser = await this.userService.findByEmail(body.email);
 
     if (!existsUser) {
       throw new HttpError(
-        StatusCodes.UNAUTHORIZED,
-        `User with email «${body.email}» dont exist`,
+        StatusCodes.BAD_REQUEST,
+        `User with email ${body.email} doesn't exists`,
         'UserController',
       );
     }
@@ -80,7 +75,7 @@ export class UserController extends BaseController {
     if (!user) {
       throw new HttpError(
         StatusCodes.UNAUTHORIZED,
-        `User with id «${query.userId}» not found`,
+        `User with id ${query.userId} not found`,
         'UserController',
       );
     }
@@ -97,7 +92,7 @@ export class UserController extends BaseController {
     if (!existsUser) {
       throw new HttpError(
         StatusCodes.UNAUTHORIZED,
-        `User with email «${body.email}» not found`,
+        `User with email ${body.email} not found`,
         'UserController',
       );
     }
