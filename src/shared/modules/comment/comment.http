@@ -1,0 +1,16 @@
+# Категории
+## Получить список категорий
+GET http://localhost:3000/comments/67c4589b5673f0a2baba174e HTTP/1.1
+Content-Type: application/json
+
+###
+
+POST http://localhost:3000/comments HTTP/1.1
+Content-Type: application/json
+
+{
+  "offerId": "67c4589b5673f0a2baba174e",
+  "text": "string",
+  "rating": "4.5",
+  "user": "67cb46ef04311508baa02ebf"
+}

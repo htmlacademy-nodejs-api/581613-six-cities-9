@@ -10,10 +10,11 @@ export interface OfferService {
   findByTitle(title: string): Promise<DocumentType<OfferEntity> | null>;
   findByTitleOrCreate(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>>;
   findById(id: string): Promise<DocumentType<OfferEntity> | null>;
-  findAll(): Promise<DocumentType<OfferEntity>[]>;
+  findAll(count?: number): Promise<DocumentType<OfferEntity>[]>;
   delete(id: string): Promise<DocumentType<OfferEntity> | null>;
   update(id: string, dto: UpdateOfferDto): Promise<DocumentType<OfferEntity> | null>;
   updateRating(id: string, rating: number, dto: UpdateOfferDto): Promise<DocumentType<OfferEntity> | null>;
   findPremiumByCity(city: City): Promise<DocumentType<OfferEntity>[] | null>;
   findAllByIds(ids: string[]): Promise<DocumentType<OfferEntity | null>[] | null>;
+  updateCommentsCount(id: string, isAddComment: boolean): Promise<DocumentType<OfferEntity> | null>
 }

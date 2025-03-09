@@ -4,15 +4,19 @@ import { StatusCodes } from 'http-status-codes';
 
 import { BaseController, HttpError, HttpMethod } from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
-import { City, Component } from '../../types/index.js';
+import { Component } from '../../types/index.js';
 import { OfferService } from './offer-service.interface.js';
-import { fillDTO } from '../../helpers/index.js';
+import { convertToNumber, fillDTO } from '../../helpers/index.js';
 import { OfferRdo } from './rdo/offer.rdo.js';
 import { CreateOfferRequest } from './types/create-offer-request.type.js';
 import { UserService } from '../user/user-service.interface.js';
+import { CommentService } from '../comment/comment-service.interface.js';
 import { FavouriteOfferRequest } from './types/favourite-offer-request.type.js';
 import { UpdateOfferRequest } from './types/update-offer-request.type.js';
-import { OfferRequestParams } from './types/offer-request-params.type.js';
+import { OfferRequestParams } from './types/offer-list-request.type.js';
+import { PremiumOfferRequest } from './types/premium-offer-request.type.js';
+import { FavouritesOfferRequest } from './types/favourites-offer-request.type.js';
+import { OffersListRequestParams } from './types/offer-request-params.type copy.js';
 
 @injectable()
 export class OfferController extends BaseController {
@@ -20,6 +24,7 @@ export class OfferController extends BaseController {
     @inject(Component.Logger) protected readonly logger: Logger,
     @inject(Component.OfferService) private readonly offerService: OfferService,
     @inject(Component.UserService) private readonly userService: UserService,
+    @inject(Component.CommentService) private readonly commentsService: CommentService,
   ) {
     super(logger);
 
@@ -35,13 +40,13 @@ export class OfferController extends BaseController {
       { path: '/:offerId', method: HttpMethod.Get, handler: this.item },
       { path: '/:offerId', method: HttpMethod.Patch, handler: this.updateItem },
       { path: '/:offerId', method: HttpMethod.Delete, handler: this.deleteItem },
-    ]
+    ];
 
     this.addRoute(routes);
   }
 
-  public async index(_req: Request, res: Response): Promise<void> {
-    const offers = await this.offerService.findAll();
+  public async index({ query }: OffersListRequestParams, res: Response): Promise<void> {
+    const offers = await this.offerService.findAll(convertToNumber(query.count));
 
     this.ok(res, fillDTO(OfferRdo, offers));
   }
@@ -52,18 +57,26 @@ export class OfferController extends BaseController {
     this.created(res, fillDTO(OfferRdo, offer));
   }
 
-  public async premium({ query }: Request, res: Response): Promise<void> {
-
+  public async premium({ query }: PremiumOfferRequest, res: Response): Promise<void> {
     if (!query.city) {
       return;
     }
-    const offers = await this.offerService.findPremiumByCity(query.city as City);
+
+    const offers = await this.offerService.findPremiumByCity(query.city);
 
     this.created(res, fillDTO(OfferRdo, offers));
   }
 
-  public async getFavourites({ query }: GetFavouriteOffersRequest, res: Response): Promise<void> {
-    const user = await this.userService.findById(query.userId as string);
+  public async getFavourites({ query }: FavouritesOfferRequest, res: Response): Promise<void> {
+    if (!query.userId) {
+      throw new HttpError(
+        StatusCodes.BAD_REQUEST,
+        'Bad Request params',
+        'OfferController',
+      );
+    }
+
+    const user = await this.userService.findById(query.userId);
 
     if (!user) {
       throw new HttpError(
@@ -78,7 +91,7 @@ export class OfferController extends BaseController {
     this.created(res, fillDTO(OfferRdo, offers));
   }
 
-  public async addFavourites({ body }: FavouriteOfferRequest, res: Response): Promise<void> {
+  public async addFavourites({ body }: Request, res: Response): Promise<void> {
     await this.userService.changeFavouriteOffer(body.userId, body.offerId, false);
 
     this.okNoContent(res);
@@ -106,6 +119,7 @@ export class OfferController extends BaseController {
 
   public async deleteItem({ params }: OfferRequestParams, res: Response): Promise<void> {
     await this.offerService.delete(params.offerId);
+    await this.commentsService.deleteByOfferId(params.offerId);
 
     this.okNoContent(res);
   }

@@ -11,7 +11,7 @@ import { Config, RestSchema } from '../../libs/config/index.js';
 import { fillDTO } from '../../helpers/index.js';
 import { UserRdo } from './rdo/user.rdo.js';
 import { LoginUserRequest } from './types/login-user-request.type.js';
-import { LogoutUserRequest } from './types/logout-user-request.type.js'
+import { LogoutUserRequest } from './types/logout-user-request.type.js';
 
 @injectable()
 export class UserController extends BaseController {

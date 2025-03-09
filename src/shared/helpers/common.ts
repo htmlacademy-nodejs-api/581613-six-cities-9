@@ -39,3 +39,8 @@ export function createErrorObject(message: string) {
     error: message,
   };
 }
+
+export function convertToNumber(primitiveValue: string | number | undefined | null) {
+  return ~~(Number(primitiveValue));
+}
+
