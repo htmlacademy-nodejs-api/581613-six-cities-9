@@ -1,8 +1,8 @@
 import { inject, injectable } from 'inversify';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-import { BaseController, HttpError, HttpMethod } from '../../libs/rest/index.js';
+import { BaseController, HttpError, HttpMethod, ValidateObjectIdMiddleware, ValidateDtoMiddleware } from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
 import { OfferService } from './offer-service.interface.js';
@@ -17,6 +17,9 @@ import { OfferRequestParams } from './types/offer-list-request.type.js';
 import { PremiumOfferRequest } from './types/premium-offer-request.type.js';
 import { FavouritesOfferRequest } from './types/favourites-offer-request.type.js';
 import { OffersListRequestParams } from './types/offer-request-params.type copy.js';
+import { CreateOfferDto } from './dto/create-offer.dto.js';
+import { UpdateOfferDto } from './dto/update-offer.dto.js';
+import { FavouriteOfferDto } from './dto/favourite-offer.dto.js';
 
 @injectable()
 export class OfferController extends BaseController {
@@ -32,14 +35,23 @@ export class OfferController extends BaseController {
 
     const routes = [
       { path: '/', method: HttpMethod.Get, handler: this.index },
-      { path: '/', method: HttpMethod.Post, handler: this.create },
+      { path: '/', method: HttpMethod.Post, handler: this.create, middlewares: [new ValidateDtoMiddleware(CreateOfferDto)] },
       { path: '/premium', method: HttpMethod.Get, handler: this.premium },
       { path: '/favourites', method: HttpMethod.Get, handler: this.getFavourites },
-      { path: '/favourites', method: HttpMethod.Post, handler: this.addFavourites },
-      { path: '/favourites', method: HttpMethod.Delete, handler: this.deleteFavourites },
-      { path: '/:offerId', method: HttpMethod.Get, handler: this.item },
-      { path: '/:offerId', method: HttpMethod.Patch, handler: this.updateItem },
-      { path: '/:offerId', method: HttpMethod.Delete, handler: this.deleteItem },
+      { path: '/favourites', method: HttpMethod.Post, handler: this.addFavourites, middlewares: [new ValidateDtoMiddleware(FavouriteOfferDto)] },
+      { path: '/favourites', method: HttpMethod.Delete, handler: this.deleteFavourites, middlewares: [new ValidateDtoMiddleware(FavouriteOfferDto)]},
+      {
+        path: '/:offerId', method: HttpMethod.Get, handler: this.item,
+        middlewares: [new ValidateObjectIdMiddleware('offerId')]
+      },
+      {
+        path: '/:offerId', method: HttpMethod.Patch, handler: this.updateItem,
+        middlewares: [new ValidateObjectIdMiddleware('offerId'), new ValidateDtoMiddleware(UpdateOfferDto)]
+      },
+      {
+        path: '/:offerId', method: HttpMethod.Delete, handler: this.deleteItem,
+        middlewares: [new ValidateObjectIdMiddleware('offerId')]
+      },
     ];
 
     this.addRoute(routes);
@@ -91,7 +103,7 @@ export class OfferController extends BaseController {
     this.created(res, fillDTO(OfferRdo, offers));
   }
 
-  public async addFavourites({ body }: Request, res: Response): Promise<void> {
+  public async addFavourites({ body }: FavouriteOfferRequest, res: Response): Promise<void> {
     await this.userService.changeFavouriteOffer(body.userId, body.offerId, false);
 
     this.okNoContent(res);

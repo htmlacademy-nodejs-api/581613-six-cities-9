@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { Response, Request } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-import { BaseController, HttpError, HttpMethod } from '../../libs/rest/index.js';
+import { BaseController, HttpError, HttpMethod, ValidateDtoMiddleware } from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
 import { UserService } from './user-service.interface.js';
@@ -12,6 +12,9 @@ import { fillDTO } from '../../helpers/index.js';
 import { UserRdo } from './rdo/user.rdo.js';
 import { LoginUserRequest } from './types/login-user-request.type.js';
 import { LogoutUserRequest } from './types/logout-user-request.type.js';
+import { CreateUserDto } from './dto/create-user.dto.js';
+import { LoginUserDto } from './dto/login-user.dto.js';
+import { LogoutUserDto } from './dto/logout-user.dto.js';
 
 @injectable()
 export class UserController extends BaseController {
@@ -25,10 +28,10 @@ export class UserController extends BaseController {
     this.logger.info('Register routes for UserController');
 
     const routes = [
-      { path: '/register', method: HttpMethod.Post, handler: this.create },
-      { path: '/login', method: HttpMethod.Post, handler: this.login },
-      { path: '/login', method: HttpMethod.Get, handler: this.status },
-      { path: '/logout', method: HttpMethod.Post, handler: this.logout },
+      { path: '/register', method: HttpMethod.Post, handler: this.create, middleware: [new ValidateDtoMiddleware(CreateUserDto)] },
+      { path: '/login', method: HttpMethod.Post, handler: this.login, middleware: [new ValidateDtoMiddleware(LoginUserDto)] },
+      { path: '/authCheck', method: HttpMethod.Get, handler: this.authStatus },
+      { path: '/logout', method: HttpMethod.Post, handler: this.logout, middleware: [new ValidateDtoMiddleware(LogoutUserDto)] },
     ];
 
     this.addRoute(routes);
@@ -66,19 +69,11 @@ export class UserController extends BaseController {
     this.created(res, fillDTO(UserRdo, existsUser));
   }
 
-  public async status(
-    { query }: Request,
+  public async authStatus(
+    _req: Request,
     res: Response,
   ): Promise<void> {
-    const user = await this.userService.findById(query.userId as string);
-
-    if (!user) {
-      throw new HttpError(
-        StatusCodes.UNAUTHORIZED,
-        `User with id ${query.userId} not found`,
-        'UserController',
-      );
-    }
+    // TODO: здесь будет проверка на авторизацию по токену
 
     this.okNoContent(res);
   }

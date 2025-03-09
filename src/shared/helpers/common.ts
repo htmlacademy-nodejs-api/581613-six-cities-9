@@ -44,3 +44,4 @@ export function convertToNumber(primitiveValue: string | number | undefined | nu
   return ~~(Number(primitiveValue));
 }
 
+export const getDefaultInvalidText = (fieldName: string) => `invalid value for ${fieldName} property`;
