@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-import { BaseController, HttpError, HttpMethod, ValidateObjectIdMiddleware, ValidateDtoMiddleware } from '../../libs/rest/index.js';
+import { BaseController, HttpError, HttpMethod, ValidateObjectIdMiddleware, ValidateDtoMiddleware, DocumentExistsMiddleware } from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
 import { OfferService } from './offer-service.interface.js';
@@ -33,24 +33,26 @@ export class OfferController extends BaseController {
 
     this.logger.info('Register routes for OfferController');
 
+    const offerExistsMiddleware = new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId');
+
     const routes = [
       { path: '/', method: HttpMethod.Get, handler: this.index },
       { path: '/', method: HttpMethod.Post, handler: this.create, middlewares: [new ValidateDtoMiddleware(CreateOfferDto)] },
       { path: '/premium', method: HttpMethod.Get, handler: this.premium },
       { path: '/favourites', method: HttpMethod.Get, handler: this.getFavourites },
       { path: '/favourites', method: HttpMethod.Post, handler: this.addFavourites, middlewares: [new ValidateDtoMiddleware(FavouriteOfferDto)] },
-      { path: '/favourites', method: HttpMethod.Delete, handler: this.deleteFavourites, middlewares: [new ValidateDtoMiddleware(FavouriteOfferDto)]},
+      { path: '/favourites', method: HttpMethod.Delete, handler: this.deleteFavourites, middlewares: [new ValidateDtoMiddleware(FavouriteOfferDto)] },
       {
         path: '/:offerId', method: HttpMethod.Get, handler: this.item,
-        middlewares: [new ValidateObjectIdMiddleware('offerId')]
+        middlewares: [new ValidateObjectIdMiddleware('offerId'), offerExistsMiddleware]
       },
       {
         path: '/:offerId', method: HttpMethod.Patch, handler: this.updateItem,
-        middlewares: [new ValidateObjectIdMiddleware('offerId'), new ValidateDtoMiddleware(UpdateOfferDto)]
+        middlewares: [new ValidateObjectIdMiddleware('offerId'), new ValidateDtoMiddleware(UpdateOfferDto), offerExistsMiddleware]
       },
       {
         path: '/:offerId', method: HttpMethod.Delete, handler: this.deleteItem,
-        middlewares: [new ValidateObjectIdMiddleware('offerId')]
+        middlewares: [new ValidateObjectIdMiddleware('offerId'), offerExistsMiddleware]
       },
     ];
 

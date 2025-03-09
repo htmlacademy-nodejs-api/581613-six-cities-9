@@ -65,7 +65,7 @@ export const VALIDATION_MESSAGES = {
     MAX: `guests count cannot be more  than ${VALIDATION_RULES.GUESTS_COUNT.MAX}`,
   },
   PRICE: {
-    MIN: `price cannot be less than ${VALIDATION_RULES.GUESTS_COUNT.MIN}`,
-    MAX: `price count cannot be more  than ${VALIDATION_RULES.GUESTS_COUNT.MAX}`,
+    MIN: `price cannot be less than ${VALIDATION_RULES.PRICE.MIN}`,
+    MAX: `price count cannot be more  than ${VALIDATION_RULES.PRICE.MAX}`,
   }
 };

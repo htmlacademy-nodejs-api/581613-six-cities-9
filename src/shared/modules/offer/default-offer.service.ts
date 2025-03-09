@@ -7,7 +7,8 @@ import { Logger } from '../../libs/logger/index.js';
 import { OfferEntity } from './offer.entity.js';
 import { CreateOfferDto } from './dto/create-offer.dto.js';
 import { UpdateOfferDto } from './dto/update-offer.dto.js';
-import { COMMENTS_DECREMENT, COMMENTS_INCREMENT, NUMBER_HALF_SEPARATOR, RATING_DECIMAL_PLACES_NUMBER } from './offer.constants.js';
+import { COMMENTS_INCREMENT, NUMBER_HALF_SEPARATOR, RATING_DECIMAL_PLACES_NUMBER } from './offer.constants.js';
+import { CreateCommentDto } from '../comment/index.js';
 
 const DEFAULT_OFFERS_COUNT = 50;
 const PREMIUM_OFFERS_COUNT = 3;
@@ -58,22 +59,17 @@ export class DefaultOfferService implements OfferService {
       .exec();
   }
 
-  public async updateCommentsCount(id: string, isAddComment: boolean): Promise<DocumentType<OfferEntity> | null> {
+  public async addReview({ rating, offerId }: CreateCommentDto): Promise<DocumentType<OfferEntity> | null> {
+    const offer = await this.offerModel.findById(offerId);
+
     return this.offerModel
-      .findByIdAndUpdate(id, {
+      .findByIdAndUpdate(offerId, {
+        ...offer,
+        rating: offer?.rating ? ((Number(offer?.rating) + rating) / NUMBER_HALF_SEPARATOR).toFixed(RATING_DECIMAL_PLACES_NUMBER) : rating,
         '$inc': {
-          commentsCount: isAddComment ? COMMENTS_INCREMENT : COMMENTS_DECREMENT,
+          commentsCount: COMMENTS_INCREMENT,
         },
-      }).exec();
-  }
-
-  public async updateRating(id: string, rating: number): Promise<DocumentType<OfferEntity> | null> {
-    const offer = await this.offerModel.findById(id);
-
-    const newRating = offer?.rating ? ((Number(offer?.rating) + rating) / NUMBER_HALF_SEPARATOR).toFixed(RATING_DECIMAL_PLACES_NUMBER) : rating;
-
-    return this.offerModel
-      .findByIdAndUpdate(id, { ...offer, rating: newRating }, { new: true })
+      }, { new: true })
       .populate(['user'])
       .exec();
   }
@@ -85,5 +81,10 @@ export class DefaultOfferService implements OfferService {
 
   public async findAllByIds(ids: string[]): Promise<DocumentType<OfferEntity>[] | null> {
     return this.offerModel.find({ '_id': { $in: ids } });
+  }
+
+  public async exists(id: string): Promise<boolean> {
+    return (await this.offerModel
+      .exists({ _id: id })) !== null;
   }
 }

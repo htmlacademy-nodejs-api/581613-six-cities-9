@@ -1,8 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { Response, Request } from 'express';
-import { StatusCodes } from 'http-status-codes';
 
-import { BaseController, HttpError, HttpMethod, ValidateDtoMiddleware } from '../../libs/rest/index.js';
+import { BaseController, DocumentExistsMiddleware, HttpMethod, UploadFileMiddleware, ValidateDtoMiddleware } from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
 import { UserService } from './user-service.interface.js';
@@ -32,41 +31,31 @@ export class UserController extends BaseController {
       { path: '/login', method: HttpMethod.Post, handler: this.login, middleware: [new ValidateDtoMiddleware(LoginUserDto)] },
       { path: '/authCheck', method: HttpMethod.Get, handler: this.authStatus },
       { path: '/logout', method: HttpMethod.Post, handler: this.logout, middleware: [new ValidateDtoMiddleware(LogoutUserDto)] },
-    ];
+      {
+        path: '/:userId/avatar',
+        method: HttpMethod.Post,
+        handler: this.uploadAvatar,
+        middlewares: [
+          new DocumentExistsMiddleware(this.userService, 'User', 'userId'),
+          new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'avatar'),
+        ]
+      }];
 
     this.addRoute(routes);
   }
 
   public async create({ body }: CreateUserRequest, res: Response): Promise<void> {
-    const existsUser = await this.userService.findByEmail(body.email);
-
-    if (existsUser) {
-      throw new HttpError(
-        StatusCodes.CONFLICT,
-        `User with email «${body.email}» already exist`,
-        'UserController'
-      );
-    }
-
-    const result = await this.userService.create(body, this.configService.get('SALT'));
-    this.created(res, fillDTO(UserRdo, result));
+    const user = await this.userService.create(body, this.configService.get('SALT'));
+    this.created(res, fillDTO(UserRdo, user));
   }
 
   public async login(
     { body }: LoginUserRequest,
     res: Response,
   ): Promise<void> {
-    const existsUser = await this.userService.findByEmail(body.email);
+    const user = await this.userService.findByEmail(body.email);
 
-    if (!existsUser) {
-      throw new HttpError(
-        StatusCodes.BAD_REQUEST,
-        `User with email ${body.email} doesn't exists`,
-        'UserController',
-      );
-    }
-
-    this.created(res, fillDTO(UserRdo, existsUser));
+    this.ok(res, fillDTO(UserRdo, user));
   }
 
   public async authStatus(
@@ -82,16 +71,14 @@ export class UserController extends BaseController {
     { body }: LogoutUserRequest,
     res: Response,
   ): Promise<void> {
-    const existsUser = await this.userService.findByEmail(body.email);
-
-    if (!existsUser) {
-      throw new HttpError(
-        StatusCodes.UNAUTHORIZED,
-        `User with email ${body.email} not found`,
-        'UserController',
-      );
-    }
+    await this.userService.findByEmail(body.email);
 
     this.okNoContent(res);
+  }
+
+  public async uploadAvatar(req: Request, res: Response) {
+    this.created(res, {
+      filepath: req.file?.path
+    });
   }
 }
