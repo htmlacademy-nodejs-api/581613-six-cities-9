@@ -18,6 +18,7 @@ export class RestApplication {
     @inject(Component.DatabaseClient) private readonly databaseClient: DatabaseClient,
     @inject(Component.OfferController) private readonly offerController: Controller,
     @inject(Component.UserController) private readonly userController: Controller,
+    @inject(Component.CommentController) private readonly commentsController: Controller,
     @inject(Component.ExceptionFilter) private readonly appExceptionFilter: ExceptionFilter,
   ) { }
 
@@ -54,6 +55,10 @@ export class RestApplication {
   private async initMiddleware() {
     this.logger.info('Init app-level middleware');
     this.server.use(express.json());
+    this.server.use(
+      '/upload',
+      express.static(this.config.get('UPLOAD_DIRECTORY'))
+    );
     this.logger.info('App-level middleware initialization completed');
   }
 
@@ -62,6 +67,7 @@ export class RestApplication {
 
     this.server.use('/offers', this.offerController.router);
     this.server.use('/users', this.userController.router);
+    this.server.use('/comments', this.commentsController.router);
 
     this.logger.info('Controller initialization completed');
   }

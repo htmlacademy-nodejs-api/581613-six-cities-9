@@ -4,8 +4,10 @@ import { inject, injectable } from 'inversify';
 import { CommentService } from './comment-service.interface.js';
 import { CommentEntity } from './comment.entity.js';
 import { CreateCommentDto } from './dto/create-comment.dto.js';
-import { Component } from '../../types/index.js';
+import { Component, SortType } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
+
+const DEFAULT_COMMENTS_COUNT = 50;
 
 @injectable()
 export class DefaultCommentService implements CommentService {
@@ -15,21 +17,23 @@ export class DefaultCommentService implements CommentService {
   ) { }
 
   public async create(dto: CreateCommentDto): Promise<DocumentType<CommentEntity>> {
-    const comment = new CommentEntity(dto);
+    const comment = await this.commentModel.create(dto);
 
-    const result = await this.commentModel.create(comment);
     this.logger.info(`New comment created at: ${comment.createdAt}`);
 
-    return result;
+    return comment;
   }
 
-  public async findByOfferId(offerId: string): Promise<DocumentType<CommentEntity>[] | null> {
-    return this.commentModel.find({ id: offerId });
+  public async findByOfferId(offerId: string, count?: number): Promise<DocumentType<CommentEntity>[] | null> {
+    const limit = count ?? DEFAULT_COMMENTS_COUNT;
+
+    return this.commentModel.find({ offerId }).sort({ commentCount: SortType.Down })
+      .limit(limit);
   }
 
   public async deleteByOfferId(offerId: string): Promise<number> {
     const result = await this.commentModel
-      .deleteMany({offerId})
+      .deleteMany({ offerId })
       .exec();
 
     return result.deletedCount;

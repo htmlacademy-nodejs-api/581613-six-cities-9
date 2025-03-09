@@ -18,12 +18,22 @@ export abstract class BaseController implements Controller {
   ) {
   }
 
-  public addRoute(route: Route) {
-    const wrapperAsyncHandler = asyncHandler(route.handler.bind(this));
+  public addRoute(routes: Route | Route[]) {
+    const addedRoutes = [routes].flat(2);
 
-    this.router[route.method](route.path, wrapperAsyncHandler);
+    for (const route of addedRoutes) {
+      const middlewareHandlers = route.middlewares?.map(
+        (item) => asyncHandler(item.execute.bind(item))
+      );
 
-    this.logger.info(`Route registered: ${route.method.toUpperCase()} ${route.path}`);
+      const wrapperAsyncHandler = asyncHandler(route.handler.bind(this));
+
+      const allHandlers = middlewareHandlers ? [...middlewareHandlers, wrapperAsyncHandler] : wrapperAsyncHandler;
+
+      this.router[route.method](route.path, allHandlers);
+
+      this.logger.info(`Route registered: ${route.method.toUpperCase()} ${route.path}`);
+    }
   }
 
   public send<T>(res: Response, statusCode: number, data: T): void {

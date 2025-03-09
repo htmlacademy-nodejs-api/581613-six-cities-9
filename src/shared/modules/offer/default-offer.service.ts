@@ -2,12 +2,16 @@ import { inject, injectable } from 'inversify';
 import { DocumentType, types } from '@typegoose/typegoose';
 
 import { OfferService } from './offer-service.interface.js';
-import { City, Component } from '../../types/index.js';
+import { City, Component, SortType } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { OfferEntity } from './offer.entity.js';
 import { CreateOfferDto } from './dto/create-offer.dto.js';
 import { UpdateOfferDto } from './dto/update-offer.dto.js';
-import { COMMENTS_DECREMENT, COMMENTS_INCREMENT, NUMBER_HALF_SEPARATOR, RATING_DECIMAL_PLACES_NUMBER } from './offer.constants.js';
+import { COMMENTS_INCREMENT, NUMBER_HALF_SEPARATOR, RATING_DECIMAL_PLACES_NUMBER } from './offer.constants.js';
+import { CreateCommentDto } from '../comment/index.js';
+
+const DEFAULT_OFFERS_COUNT = 50;
+const PREMIUM_OFFERS_COUNT = 3;
 
 @injectable()
 export class DefaultOfferService implements OfferService {
@@ -37,8 +41,11 @@ export class DefaultOfferService implements OfferService {
     return offer ?? this.create(dto);
   }
 
-  public async findAll(): Promise<DocumentType<OfferEntity>[]> {
-    return this.offerModel.find();
+  public async findAll(count?: number): Promise<DocumentType<OfferEntity>[]> {
+    const limit = count ?? DEFAULT_OFFERS_COUNT;
+
+    return this.offerModel.find().sort({ createdAt: SortType.Down })
+      .limit(limit).exec();
   }
 
   public async delete(id: string): Promise<DocumentType<OfferEntity> | null> {
@@ -52,31 +59,32 @@ export class DefaultOfferService implements OfferService {
       .exec();
   }
 
-  public async updateCommentsCount(id: string, isAddComment: boolean): Promise<DocumentType<OfferEntity> | null> {
+  public async addReview({ rating, offerId }: CreateCommentDto): Promise<DocumentType<OfferEntity> | null> {
+    const offer = await this.offerModel.findById(offerId);
+
     return this.offerModel
-      .findByIdAndUpdate(id, {
+      .findByIdAndUpdate(offerId, {
+        ...offer,
+        rating: offer?.rating ? ((Number(offer?.rating) + rating) / NUMBER_HALF_SEPARATOR).toFixed(RATING_DECIMAL_PLACES_NUMBER) : rating,
         '$inc': {
-          commentsCount: isAddComment ? COMMENTS_INCREMENT : COMMENTS_DECREMENT,
+          commentsCount: COMMENTS_INCREMENT,
         },
-      }).exec();
-  }
-
-  public async updateRating(id: string, rating: number): Promise<DocumentType<OfferEntity> | null> {
-    const offer = await this.offerModel.findById(id);
-
-    const newRating = offer?.rating ? ((Number(offer?.rating) + rating) / NUMBER_HALF_SEPARATOR).toFixed(RATING_DECIMAL_PLACES_NUMBER) : rating;
-
-    return this.offerModel
-      .findByIdAndUpdate(id, { ...offer, rating: newRating }, { new: true })
+      }, { new: true })
       .populate(['user'])
       .exec();
   }
 
-  public async findPremiumByCity(city: City): Promise<DocumentType<OfferEntity>[] | null> {
-    return this.offerModel.find({ city, premium: true }).exec();
+  public async findPremiumByCity(city: City,): Promise<DocumentType<OfferEntity>[] | null> {
+    return this.offerModel.find({ city, premium: true }).sort({ createdAt: SortType.Down })
+      .limit(PREMIUM_OFFERS_COUNT).exec();
   }
 
   public async findAllByIds(ids: string[]): Promise<DocumentType<OfferEntity>[] | null> {
     return this.offerModel.find({ '_id': { $in: ids } });
+  }
+
+  public async exists(id: string): Promise<boolean> {
+    return (await this.offerModel
+      .exists({ _id: id })) !== null;
   }
 }
