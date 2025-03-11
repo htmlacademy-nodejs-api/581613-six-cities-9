@@ -39,3 +39,9 @@ export function createErrorObject(message: string) {
     error: message,
   };
 }
+
+export function convertToNumber(primitiveValue: string | number | undefined | null) {
+  return ~~(Number(primitiveValue));
+}
+
+export const getDefaultInvalidText = (fieldName: string) => `invalid value for ${fieldName} property`;

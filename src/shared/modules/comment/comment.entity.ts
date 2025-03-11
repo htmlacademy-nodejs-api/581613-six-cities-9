@@ -2,10 +2,11 @@ import { defaultClasses, getModelForClass, prop, modelOptions } from '@typegoose
 
 import { Comment } from '../../types/index.js';
 import { UserEntity } from '../user/user.entity.js';
+import { OfferEntity } from '../offer/offer.entity.js';
 
 @modelOptions({
   schemaOptions: {
-    collection: 'users',
+    collection: 'comments',
     timestamps: true,
   }
 })
@@ -13,8 +14,8 @@ export class CommentEntity extends defaultClasses.TimeStamps implements Comment 
   constructor(commentData: Comment) {
     super();
 
+    this.offerId = commentData.offerId;
     this.user = commentData.user;
-    this.date = commentData.date;
     this.text = commentData.text;
     this.rating = commentData.rating;
   }
@@ -27,8 +28,13 @@ export class CommentEntity extends defaultClasses.TimeStamps implements Comment 
   })
   public user: string;
 
-  @prop({ required: true })
-  public date: Date;
+  @prop({
+    ref: OfferEntity,
+    required: true,
+    default: {},
+    _id: false
+  })
+  public offerId: string;
 
   @prop({ required: true, default: '' })
   public text: string;
