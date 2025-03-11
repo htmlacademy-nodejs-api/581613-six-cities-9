@@ -31,7 +31,6 @@ export class CommentController extends BaseController {
     this.addRoute(routes);
   }
 
-
   public async index(
     { params, query }: CommentsRequestParams,
     res: Response,
