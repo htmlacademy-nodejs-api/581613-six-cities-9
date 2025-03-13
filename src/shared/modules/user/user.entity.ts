@@ -4,12 +4,16 @@ import { User } from '../../types/index.js';
 import { createSHA256 } from '../../helpers/index.js';
 import mongoose from 'mongoose';
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
+export interface UserEntity extends defaultClasses.Base {}
+
 @modelOptions({
   schemaOptions: {
     collection: 'users',
     timestamps: true,
   }
 })
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class UserEntity extends defaultClasses.TimeStamps implements User {
   constructor(userData: User) {
     super();
@@ -45,6 +49,11 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
 
   public getPassword() {
     return this.password;
+  }
+
+  public verifyPassword(password: string, salt: string) {
+    const hashPassword = createSHA256(password, salt);
+    return hashPassword === this.password;
   }
 }
 

@@ -14,6 +14,5 @@ export class CreateCommentDto {
   @Max(VALIDATION_RULES.RATING.MAX, { message: VALIDATION_MESSAGES.RATING.MAX })
   public rating: number;
 
-  @IsMongoId({ message: getDefaultInvalidText('user') })
   public user: string;
 }
