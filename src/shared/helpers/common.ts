@@ -40,8 +40,14 @@ export function createErrorObject(message: string) {
   };
 }
 
-export function convertToNumber(primitiveValue: string | number | undefined | null) {
-  return ~~(Number(primitiveValue));
+export function convertToNumber(primitive: string | number | undefined | null) {
+  const numberValue = Number(primitive);
+
+  if (Number.isNaN(numberValue)) {
+    return 0;
+  }
+
+  return numberValue;
 }
 
 export const getDefaultInvalidText = (fieldName: string) => `invalid value for ${fieldName} property`;

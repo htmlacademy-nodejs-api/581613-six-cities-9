@@ -7,9 +7,10 @@ Content-Type: application/json
 
 POST http://localhost:3000/offers HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBsYXRvQG1haWwuY29tIiwibmFtZSI6IlBsYXRvIiwiaWQiOiI2N2Q0NzMwZjVmNjc1ZDc1ZmY0ZWRlNGUiLCJpYXQiOjE3NDE5Nzc1ODEsImV4cCI6MTc0MjE1MDM4MX0.FxzGEY6eZhePp0JUtnawKwCF60j1cL5jXKPkOKxyYjU
 
 {
-  "title": "das",
+  "title": "dasaa",
   "description": "string",
   "city": "Paris",
   "previewImage": "string",

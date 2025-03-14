@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { Response, Request } from 'express';
 
-import { BaseController, DocumentExistsMiddleware, HttpMethod, UploadFileMiddleware, ValidateDtoMiddleware } from '../../libs/rest/index.js';
+import { BaseController, DocumentExistsMiddleware, HttpError, HttpMethod, UploadFileMiddleware, ValidateDtoMiddleware } from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
 import { UserService } from './user-service.interface.js';
@@ -14,6 +14,9 @@ import { LogoutUserRequest } from './types/logout-user-request.type.js';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { LoginUserDto } from './dto/login-user.dto.js';
 import { LogoutUserDto } from './dto/logout-user.dto.js';
+import { AuthService } from '../auth/index.js';
+import { LoggedUserRdo } from './rdo/logged-user.rdo.js';
+import { StatusCodes } from 'http-status-codes';
 
 @injectable()
 export class UserController extends BaseController {
@@ -21,6 +24,7 @@ export class UserController extends BaseController {
     @inject(Component.Logger) protected readonly logger: Logger,
     @inject(Component.UserService) private readonly userService: UserService,
     @inject(Component.Config) private readonly configService: Config<RestSchema>,
+    @inject(Component.AuthService) private readonly authService: AuthService,
   ) {
     super(logger);
 
@@ -29,7 +33,7 @@ export class UserController extends BaseController {
     const routes = [
       { path: '/register', method: HttpMethod.Post, handler: this.create, middleware: [new ValidateDtoMiddleware(CreateUserDto)] },
       { path: '/login', method: HttpMethod.Post, handler: this.login, middleware: [new ValidateDtoMiddleware(LoginUserDto)] },
-      { path: '/authCheck', method: HttpMethod.Get, handler: this.authStatus },
+      { path: '/authCheck', method: HttpMethod.Get, handler: this.authCheck },
       { path: '/logout', method: HttpMethod.Post, handler: this.logout, middleware: [new ValidateDtoMiddleware(LogoutUserDto)] },
       {
         path: '/:userId/avatar',
@@ -53,18 +57,27 @@ export class UserController extends BaseController {
     { body }: LoginUserRequest,
     res: Response,
   ): Promise<void> {
-    const user = await this.userService.findByEmail(body.email);
-
-    this.ok(res, fillDTO(UserRdo, user));
+    const user = await this.authService.verify(body);
+    const token = await this.authService.authenticate(user);
+    const responseData = fillDTO(LoggedUserRdo, {
+      email: user.email,
+      token,
+    });
+    this.ok(res, responseData);
   }
 
-  public async authStatus(
-    _req: Request,
-    res: Response,
-  ): Promise<void> {
-    // TODO: здесь будет проверка на авторизацию по токену
+  public async authCheck({ tokenPayload: { email } }: Request, res: Response) {
+    const foundedUser = await this.userService.findByEmail(email);
 
-    this.okNoContent(res);
+    if (!foundedUser) {
+      throw new HttpError(
+        StatusCodes.UNAUTHORIZED,
+        'Unauthorized',
+        'UserController'
+      );
+    }
+
+    this.ok(res, fillDTO(LoggedUserRdo, foundedUser));
   }
 
   public async logout(

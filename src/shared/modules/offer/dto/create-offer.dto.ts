@@ -1,4 +1,4 @@
-import { IsArray, IsDateString, IsNotEmptyObject, IsObject, IsEnum, IsNumber, IsMongoId, Max, MaxLength, Min, MinLength, ArrayMaxSize, IsBoolean } from 'class-validator';
+import { IsArray, IsDateString, ValidateNested, IsString, IsEnum, IsNumber, IsMongoId, Max, MinLength, Min, Length, ArrayMaxSize, IsBoolean } from 'class-validator';
 import { Type } from 'class-transformer';
 
 import { City } from '../../../types/cities.enum.js';
@@ -10,12 +10,10 @@ import { VALIDATION_MESSAGES, VALIDATION_RULES } from './offer.validation.js';
 import { getDefaultInvalidText } from '../../../helpers/common.js';
 
 export class CreateOfferDto {
-  @MinLength(VALIDATION_RULES.TITLE_LENGTH.MIN, { message: VALIDATION_MESSAGES.TITLE_LENGTH.MIN })
-  @MaxLength(VALIDATION_RULES.TITLE_LENGTH.MAX, { message: VALIDATION_MESSAGES.TITLE_LENGTH.MAX })
+  @Length(VALIDATION_RULES.TITLE_LENGTH.MIN, VALIDATION_RULES.TITLE_LENGTH.MAX, { message: VALIDATION_MESSAGES.TITLE_LENGTH.MIN })
   public title: string;
 
-  @MinLength(VALIDATION_RULES.DESCRIPTION_LENGTH.MIN, { message: VALIDATION_MESSAGES.DESCRIPTION_LENGTH.MIN })
-  @MaxLength(VALIDATION_RULES.DESCRIPTION_LENGTH.MAX, { message: VALIDATION_MESSAGES.DESCRIPTION_LENGTH.MIN })
+  @Length(VALIDATION_RULES.DESCRIPTION_LENGTH.MIN, VALIDATION_RULES.DESCRIPTION_LENGTH.MAX, { message: VALIDATION_MESSAGES.DESCRIPTION_LENGTH.MIN })
   public description: string;
 
   // TODO: по ТЗ - 5.1.3. Для создания нового предложения по аренде КЛИЕНТ передаёт информацию, указанную в пункте 3.2.
@@ -31,6 +29,7 @@ export class CreateOfferDto {
 
   @IsArray({ message: VALIDATION_MESSAGES.IMAGES.UNEXPECTED })
   @ArrayMaxSize(VALIDATION_RULES.IMAGES.LENGTH, { message: VALIDATION_MESSAGES.IMAGES.LENGTH })
+  @IsString({ each: true })
   public images: string[];
 
   @IsBoolean({ message: getDefaultInvalidText('premium') })
@@ -63,8 +62,7 @@ export class CreateOfferDto {
   @IsMongoId({ message: getDefaultInvalidText('user') })
   public user: string;
 
-  @IsNotEmptyObject()
-  @IsObject({ message: getDefaultInvalidText('coordinates') })
+  @ValidateNested({ message: getDefaultInvalidText('coordinates') })
   @Type(() => CoordinatesDto)
   public coordinates: Coordinates;
 }
