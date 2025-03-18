@@ -42,25 +42,28 @@ export class OfferController extends BaseController {
     this.logger.info('Register routes for OfferController');
 
     const offerExistsMiddleware = new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId');
+    const privateRouteMiddleware = new PrivateRouteMiddleware();
+    const validateFavouriteOfferMiddleware = new ValidateDtoMiddleware(FavouriteOfferDto);
+    const validateOfferIdMiddleware = new ValidateObjectIdMiddleware('offerId');
 
     const routes = [
       { path: '/', method: HttpMethod.Get, handler: this.index },
-      { path: '/', method: HttpMethod.Post, handler: this.create, middlewares: [new PrivateRouteMiddleware(), new ValidateDtoMiddleware(CreateOfferDto)] },
+      { path: '/', method: HttpMethod.Post, handler: this.create, middlewares: [privateRouteMiddleware, new ValidateDtoMiddleware(CreateOfferDto)] },
       { path: '/premium', method: HttpMethod.Get, handler: this.premium },
       { path: '/favourites', method: HttpMethod.Get, handler: this.getFavourites },
-      { path: '/favourites', method: HttpMethod.Post, handler: this.addFavourites, middlewares: [new PrivateRouteMiddleware(), new ValidateDtoMiddleware(FavouriteOfferDto)] },
-      { path: '/favourites', method: HttpMethod.Delete, handler: this.deleteFavourites, middlewares: [new ValidateDtoMiddleware(FavouriteOfferDto)] },
+      { path: '/favourites', method: HttpMethod.Post, handler: this.addFavourites, middlewares: [privateRouteMiddleware, validateFavouriteOfferMiddleware] },
+      { path: '/favourites', method: HttpMethod.Delete, handler: this.deleteFavourites, middlewares: [validateFavouriteOfferMiddleware] },
       {
         path: '/:offerId', method: HttpMethod.Get, handler: this.item,
-        middlewares: [new ValidateObjectIdMiddleware('offerId'), offerExistsMiddleware]
+        middlewares: [validateOfferIdMiddleware, offerExistsMiddleware]
       },
       {
         path: '/:offerId', method: HttpMethod.Patch, handler: this.updateItem,
-        middlewares: [new ValidateObjectIdMiddleware('offerId'), new ValidateDtoMiddleware(UpdateOfferDto), offerExistsMiddleware]
+        middlewares: [validateOfferIdMiddleware, new ValidateDtoMiddleware(UpdateOfferDto), offerExistsMiddleware]
       },
       {
         path: '/:offerId', method: HttpMethod.Delete, handler: this.deleteItem,
-        middlewares: [new ValidateObjectIdMiddleware('offerId'), offerExistsMiddleware]
+        middlewares: [validateOfferIdMiddleware, offerExistsMiddleware]
       },
     ];
 
