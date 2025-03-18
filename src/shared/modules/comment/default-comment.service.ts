@@ -24,9 +24,7 @@ export class DefaultCommentService implements CommentService {
     return comment;
   }
 
-  public async findByOfferId(offerId: string, count?: number): Promise<DocumentType<CommentEntity>[] | null> {
-    const limit = count ?? DEFAULT_COMMENTS_COUNT;
-
+  public async findByOfferId(offerId: string, limit = DEFAULT_COMMENTS_COUNT): Promise<DocumentType<CommentEntity>[] | null> {
     return this.commentModel.find({ offerId }).sort({ commentCount: SortType.Down })
       .limit(limit);
   }

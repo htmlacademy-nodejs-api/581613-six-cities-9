@@ -41,9 +41,7 @@ export class DefaultOfferService implements OfferService {
     return offer ?? this.create(dto);
   }
 
-  public async findAll(count?: number): Promise<DocumentType<OfferEntity>[]> {
-    const limit = count ?? DEFAULT_OFFERS_COUNT;
-
+  public async findAll(limit = DEFAULT_OFFERS_COUNT): Promise<DocumentType<OfferEntity>[]> {
     return this.offerModel.find().sort({ createdAt: SortType.Down })
       .limit(limit).exec();
   }

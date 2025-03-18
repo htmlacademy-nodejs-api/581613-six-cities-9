@@ -1,4 +1,10 @@
+import { IsLatitude, IsLongitude } from 'class-validator';
+import { getDefaultInvalidText } from '../../../helpers/common.js';
+
 export class CoordinatesDto {
-  latitude: number;
-  longitude: number;
+  @IsLatitude({ message: getDefaultInvalidText('latitude') })
+    latitude: number;
+
+  @IsLongitude({ message: getDefaultInvalidText('latitude') })
+    longitude: number;
 }
