@@ -85,4 +85,14 @@ export class DefaultOfferService implements OfferService {
     return (await this.offerModel
       .exists({ _id: id })) !== null;
   }
+
+  public async documentOwner(id: string): Promise<string> {
+    const offer = await this.offerModel.findById(id);
+
+    if (offer) {
+      return offer.user;
+    } else {
+      return '';
+    }
+  }
 }

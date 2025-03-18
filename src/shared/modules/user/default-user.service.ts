@@ -6,8 +6,7 @@ import { UserEntity } from './user.entity.js';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { Component } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
-import { HttpError } from '../../libs/rest/index.js';
-import { StatusCodes } from 'http-status-codes';
+import { DEFAULT_AVATAR_FILE_NAME } from './user.constant.js';
 
 @injectable()
 export class DefaultUserService implements UserService {
@@ -17,17 +16,7 @@ export class DefaultUserService implements UserService {
   ) { }
 
   public async create(dto: CreateUserDto, salt: string): Promise<DocumentType<UserEntity>> {
-    const existsUser = await this.findByEmail(dto.email);
-
-    if (existsUser) {
-      throw new HttpError(
-        StatusCodes.CONFLICT,
-        `User with email ${dto.email} already exist`,
-        'UserController'
-      );
-    }
-
-    const user = new UserEntity(dto);
+    const user = new UserEntity({ ...dto, avatar: DEFAULT_AVATAR_FILE_NAME });
     user.setPassword(dto.password, salt);
 
     const result = await this.userModel.create(user);

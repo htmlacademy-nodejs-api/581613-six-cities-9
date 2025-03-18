@@ -51,3 +51,7 @@ export function convertToNumber(primitive: string | number | undefined | null) {
 }
 
 export const getDefaultInvalidText = (fieldName: string) => `invalid value for ${fieldName} property`;
+
+export function getFullServerPath(host: string, port: number) {
+  return `http://${host}:${port}`;
+}

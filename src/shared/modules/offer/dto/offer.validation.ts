@@ -67,5 +67,5 @@ export const VALIDATION_MESSAGES = {
   PRICE: {
     MIN: `price cannot be less than ${VALIDATION_RULES.PRICE.MIN}`,
     MAX: `price count cannot be more  than ${VALIDATION_RULES.PRICE.MAX}`,
-  }
+  },
 };

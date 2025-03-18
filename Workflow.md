@@ -170,5 +170,17 @@ SALT=salt
 #### UPLOAD_DIRECTORY - путь к директории для сохранения загружаемых файлов
 
 ```bash
-SALT=\projects\581613-six-cities-9\upload
+UPLOAD_DIRECTORY=\projects\581613-six-cities-9\upload
+```
+
+#### HOST - Порт для запуска rest-приложения (по умолчанию `localhost`)
+
+```bash
+HOST=localhost
+```
+
+#### STATIC_DIRECTORY_PATH - Порт для запуска rest-приложения (по умолчанию `static`)
+
+```bash
+STATIC_DIRECTORY_PATH=static
 ```

@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
 import {
@@ -9,7 +9,7 @@ import {
   PrivateRouteMiddleware,
   ValidateObjectIdMiddleware,
   ValidateDtoMiddleware,
-  DocumentExistsMiddleware
+  DocumentExistsMiddleware,
 } from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
@@ -23,11 +23,11 @@ import { FavouriteOfferRequest } from './types/favourite-offer-request.type.js';
 import { UpdateOfferRequest } from './types/update-offer-request.type.js';
 import { OfferRequestParams } from './types/offer-list-request.type.js';
 import { PremiumOfferRequest } from './types/premium-offer-request.type.js';
-import { FavouritesOfferRequest } from './types/favourites-offer-request.type.js';
 import { OffersListRequestParams } from './types/offer-request-params.type copy.js';
 import { CreateOfferDto } from './dto/create-offer.dto.js';
 import { UpdateOfferDto } from './dto/update-offer.dto.js';
 import { FavouriteOfferDto } from './dto/favourite-offer.dto.js';
+import { ValidateOwnerMiddleware } from '../../libs/rest/middleware/validate-owner.middleware.js';
 
 @injectable()
 export class OfferController extends BaseController {
@@ -45,25 +45,26 @@ export class OfferController extends BaseController {
     const privateRouteMiddleware = new PrivateRouteMiddleware();
     const validateFavouriteOfferMiddleware = new ValidateDtoMiddleware(FavouriteOfferDto);
     const validateOfferIdMiddleware = new ValidateObjectIdMiddleware('offerId');
+    const validateOwnerMiddleware = new ValidateOwnerMiddleware(this.offerService, 'offerId');
 
     const routes = [
       { path: '/', method: HttpMethod.Get, handler: this.index },
       { path: '/', method: HttpMethod.Post, handler: this.create, middlewares: [privateRouteMiddleware, new ValidateDtoMiddleware(CreateOfferDto)] },
       { path: '/premium', method: HttpMethod.Get, handler: this.premium },
-      { path: '/favourites', method: HttpMethod.Get, handler: this.getFavourites },
+      { path: '/favourites', method: HttpMethod.Get, handler: this.getFavourites, middlewares: [privateRouteMiddleware] },
       { path: '/favourites', method: HttpMethod.Post, handler: this.addFavourites, middlewares: [privateRouteMiddleware, validateFavouriteOfferMiddleware] },
-      { path: '/favourites', method: HttpMethod.Delete, handler: this.deleteFavourites, middlewares: [validateFavouriteOfferMiddleware] },
+      { path: '/favourites', method: HttpMethod.Delete, handler: this.deleteFavourites, middlewares: [privateRouteMiddleware, validateFavouriteOfferMiddleware] },
       {
         path: '/:offerId', method: HttpMethod.Get, handler: this.item,
         middlewares: [validateOfferIdMiddleware, offerExistsMiddleware]
       },
       {
         path: '/:offerId', method: HttpMethod.Patch, handler: this.updateItem,
-        middlewares: [validateOfferIdMiddleware, new ValidateDtoMiddleware(UpdateOfferDto), offerExistsMiddleware]
+        middlewares: [privateRouteMiddleware, validateOfferIdMiddleware, offerExistsMiddleware, validateOwnerMiddleware, new ValidateDtoMiddleware(UpdateOfferDto)]
       },
       {
         path: '/:offerId', method: HttpMethod.Delete, handler: this.deleteItem,
-        middlewares: [validateOfferIdMiddleware, offerExistsMiddleware]
+        middlewares: [privateRouteMiddleware, validateOfferIdMiddleware, offerExistsMiddleware, validateOwnerMiddleware]
       },
     ];
 
@@ -76,8 +77,8 @@ export class OfferController extends BaseController {
     this.ok(res, fillDTO(OfferRdo, offers));
   }
 
-  public async create({ body }: CreateOfferRequest, res: Response): Promise<void> {
-    const offer = await this.offerService.findByTitleOrCreate(body);
+  public async create({ body, tokenPayload }: CreateOfferRequest, res: Response): Promise<void> {
+    const offer = await this.offerService.findByTitleOrCreate({ ...body, user: tokenPayload.id });
 
     this.created(res, fillDTO(OfferRdo, offer));
   }
@@ -92,21 +93,13 @@ export class OfferController extends BaseController {
     this.created(res, fillDTO(OfferRdo, offers));
   }
 
-  public async getFavourites({ query }: FavouritesOfferRequest, res: Response): Promise<void> {
-    if (!query.userId) {
-      throw new HttpError(
-        StatusCodes.BAD_REQUEST,
-        'Bad Request params',
-        'OfferController',
-      );
-    }
-
-    const user = await this.userService.findById(query.userId);
+  public async getFavourites({ tokenPayload }: Request, res: Response): Promise<void> {
+    const user = await this.userService.findById(tokenPayload.id);
 
     if (!user) {
       throw new HttpError(
         StatusCodes.NOT_FOUND,
-        `User with id ${query.userId} not found`,
+        `User with id ${tokenPayload.id} not found`,
         'OfferController',
       );
     }
@@ -116,28 +109,20 @@ export class OfferController extends BaseController {
     this.created(res, fillDTO(OfferRdo, offers));
   }
 
-  public async addFavourites({ body }: FavouriteOfferRequest, res: Response): Promise<void> {
-    await this.userService.changeFavouriteOffer(body.userId, body.offerId, false);
+  public async addFavourites({ body, tokenPayload }: FavouriteOfferRequest, res: Response): Promise<void> {
+    await this.userService.changeFavouriteOffer(tokenPayload.id, body.offerId, false);
 
     this.okNoContent(res);
   }
 
-  public async deleteFavourites({ body }: FavouriteOfferRequest, res: Response): Promise<void> {
-    await this.userService.changeFavouriteOffer(body.userId, body.offerId, true);
+  public async deleteFavourites({ body, tokenPayload }: FavouriteOfferRequest, res: Response): Promise<void> {
+    await this.userService.changeFavouriteOffer(tokenPayload.id, body.offerId, true);
 
     this.okNoContent(res);
   }
 
   public async item({ params }: OfferRequestParams, res: Response): Promise<void> {
     const offer = await this.offerService.findById(params.offerId);
-
-    if (!offer) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `Offer with id ${params.offerId} not found`,
-        'UserController',
-      );
-    }
 
     this.ok(res, fillDTO(OfferRdo, offer));
   }

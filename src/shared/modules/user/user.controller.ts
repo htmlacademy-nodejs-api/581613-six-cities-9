@@ -49,6 +49,16 @@ export class UserController extends BaseController {
   }
 
   public async create({ body }: CreateUserRequest, res: Response): Promise<void> {
+    const existsUser = await this.userService.findByEmail(body.email);
+
+    if (existsUser) {
+      throw new HttpError(
+        StatusCodes.CONFLICT,
+        `User with email ${body.email} already exist`,
+        'UserController'
+      );
+    }
+
     const user = await this.userService.create(body, this.configService.get('SALT'));
     this.created(res, fillDTO(UserRdo, user));
   }
@@ -67,9 +77,9 @@ export class UserController extends BaseController {
   }
 
   public async authCheck({ tokenPayload: { email } }: Request, res: Response) {
-    const foundedUser = await this.userService.findByEmail(email);
+    const user = await this.userService.findByEmail(email);
 
-    if (!foundedUser) {
+    if (!user) {
       throw new HttpError(
         StatusCodes.UNAUTHORIZED,
         'Unauthorized',
@@ -77,7 +87,7 @@ export class UserController extends BaseController {
       );
     }
 
-    this.ok(res, fillDTO(LoggedUserRdo, foundedUser));
+    this.ok(res, fillDTO(LoggedUserRdo, user));
   }
 
   public async logout(
