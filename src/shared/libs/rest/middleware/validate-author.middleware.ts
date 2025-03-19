@@ -3,22 +3,22 @@ import { NextFunction, Request, Response } from 'express';
 
 import { Middleware } from './middleware.interface.js';
 import { HttpError } from '../errors/index.js';
-import { DocumentOwner } from '../../../types/document-owner.interface.js';
+import { DocumentAuthor } from '../../../types/document-author.interface.js';
 
-export class ValidateOwnerMiddleware implements Middleware {
+export class ValidateAuthorMiddleware implements Middleware {
   constructor(
-    private readonly service: DocumentOwner,
+    private readonly service: DocumentAuthor,
     private readonly paramName: string,
   ) { }
 
   public async execute({ tokenPayload, params }: Request, _res: Response, next: NextFunction): Promise<void> {
-    const documentOwner = await this.service.documentOwner(params[this.paramName]);
+    const documentAuthor = await this.service.documentAuthor(params[this.paramName]);
 
-    if (tokenPayload.id !== documentOwner) {
+    if (tokenPayload.id !== documentAuthor) {
       throw new HttpError(
         StatusCodes.FORBIDDEN,
         `user with id ${tokenPayload.id} cannot change this ${this.paramName}`,
-        'ValidateOwnerMiddleware'
+        'ValidateAuthorMiddleware'
       );
     }
 

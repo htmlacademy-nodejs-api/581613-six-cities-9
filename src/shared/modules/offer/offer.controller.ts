@@ -27,7 +27,7 @@ import { OffersListRequestParams } from './types/offer-request-params.type copy.
 import { CreateOfferDto } from './dto/create-offer.dto.js';
 import { UpdateOfferDto } from './dto/update-offer.dto.js';
 import { FavouriteOfferDto } from './dto/favourite-offer.dto.js';
-import { ValidateOwnerMiddleware } from '../../libs/rest/middleware/validate-owner.middleware.js';
+import { ValidateAuthorMiddleware } from '../../libs/rest/middleware/validate-author.middleware.js';
 
 @injectable()
 export class OfferController extends BaseController {
@@ -45,7 +45,7 @@ export class OfferController extends BaseController {
     const privateRouteMiddleware = new PrivateRouteMiddleware();
     const validateFavouriteOfferMiddleware = new ValidateDtoMiddleware(FavouriteOfferDto);
     const validateOfferIdMiddleware = new ValidateObjectIdMiddleware('offerId');
-    const validateOwnerMiddleware = new ValidateOwnerMiddleware(this.offerService, 'offerId');
+    const validateAuthorMiddleware = new ValidateAuthorMiddleware(this.offerService, 'offerId');
 
     const routes = [
       { path: '/', method: HttpMethod.Get, handler: this.index },
@@ -60,11 +60,11 @@ export class OfferController extends BaseController {
       },
       {
         path: '/:offerId', method: HttpMethod.Patch, handler: this.updateItem,
-        middlewares: [privateRouteMiddleware, validateOfferIdMiddleware, offerExistsMiddleware, validateOwnerMiddleware, new ValidateDtoMiddleware(UpdateOfferDto)]
+        middlewares: [privateRouteMiddleware, validateOfferIdMiddleware, offerExistsMiddleware, validateAuthorMiddleware, new ValidateDtoMiddleware(UpdateOfferDto)]
       },
       {
         path: '/:offerId', method: HttpMethod.Delete, handler: this.deleteItem,
-        middlewares: [privateRouteMiddleware, validateOfferIdMiddleware, offerExistsMiddleware, validateOwnerMiddleware]
+        middlewares: [privateRouteMiddleware, validateOfferIdMiddleware, offerExistsMiddleware, validateAuthorMiddleware]
       },
     ];
 

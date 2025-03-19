@@ -7,6 +7,7 @@ import { CreateUserDto } from './dto/create-user.dto.js';
 import { Component } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { DEFAULT_AVATAR_FILE_NAME } from './user.constant.js';
+import { UpdateUserDto } from './dto/update-user.dto.js';
 
 @injectable()
 export class DefaultUserService implements UserService {
@@ -51,5 +52,11 @@ export class DefaultUserService implements UserService {
   public async exists(id: string): Promise<boolean> {
     return (await this.userModel
       .exists({ _id: id })) !== null;
+  }
+
+  public async updateById(userId: string, dto: UpdateUserDto): Promise<DocumentType<UserEntity> | null> {
+    return this.userModel
+      .findByIdAndUpdate(userId, dto, { new: true })
+      .exec();
   }
 }

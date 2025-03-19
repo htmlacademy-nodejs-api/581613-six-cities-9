@@ -17,6 +17,7 @@ import { LogoutUserDto } from './dto/logout-user.dto.js';
 import { AuthService } from '../auth/index.js';
 import { LoggedUserRdo } from './rdo/logged-user.rdo.js';
 import { StatusCodes } from 'http-status-codes';
+import { UploadUserAvatarRdo } from './rdo/upload-user-avatar.rdo.js';
 
 @injectable()
 export class UserController extends BaseController {
@@ -48,7 +49,15 @@ export class UserController extends BaseController {
     this.addRoute(routes);
   }
 
-  public async create({ body }: CreateUserRequest, res: Response): Promise<void> {
+  public async create({ body, tokenPayload }: CreateUserRequest, res: Response): Promise<void> {
+    if (tokenPayload) {
+      throw new HttpError(
+        StatusCodes.BAD_REQUEST,
+        'User already registered',
+        'UserController'
+      );
+    }
+
     const existsUser = await this.userService.findByEmail(body.email);
 
     if (existsUser) {
@@ -73,16 +82,17 @@ export class UserController extends BaseController {
       email: user.email,
       token,
     });
+
     this.ok(res, responseData);
   }
 
-  public async authCheck({ tokenPayload: { email } }: Request, res: Response) {
-    const user = await this.userService.findByEmail(email);
+  public async authCheck({ tokenPayload: { id } }: Request, res: Response) {
+    const user = await this.userService.findById(id);
 
     if (!user) {
       throw new HttpError(
-        StatusCodes.UNAUTHORIZED,
-        'Unauthorized',
+        StatusCodes.NOT_FOUND,
+        'user not found',
         'UserController'
       );
     }
@@ -91,17 +101,20 @@ export class UserController extends BaseController {
   }
 
   public async logout(
-    { body }: LogoutUserRequest,
+    { tokenPayload }: LogoutUserRequest,
     res: Response,
   ): Promise<void> {
-    await this.userService.findByEmail(body.email);
+    await this.userService.findById(tokenPayload.id);
 
     this.okNoContent(res);
   }
 
-  public async uploadAvatar(req: Request, res: Response) {
-    this.created(res, {
-      filepath: req.file?.path
-    });
+  public async uploadAvatar({ params, file }: Request, res: Response) {
+    const { userId } = params;
+
+    const uploadFile = { avatarPath: file?.filename };
+    await this.userService.updateById(userId, uploadFile);
+
+    this.created(res, fillDTO(UploadUserAvatarRdo, { filepath: uploadFile.avatarPath }));
   }
 }
