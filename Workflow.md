@@ -167,8 +167,20 @@ DB_NAME=six-sities
 SALT=salt
 ```
 
-#### UPLOAD_DIRECTORY - путь к директории для сохранения загружаемых файлов
+#### UPLOAD_DIRECTORY - Путь к директории для сохранения загружаемых файлов
 
 ```bash
-SALT=\projects\581613-six-cities-9\upload
+UPLOAD_DIRECTORY=\projects\581613-six-cities-9\upload
+```
+
+#### HOST - Порт для запуска rest-приложения (по умолчанию `localhost`)
+
+```bash
+HOST=localhost
+```
+
+#### STATIC_DIRECTORY_PATH - Путь к директории для статичных файлов (заглушек)
+
+```bash
+STATIC_DIRECTORY_PATH=static
 ```

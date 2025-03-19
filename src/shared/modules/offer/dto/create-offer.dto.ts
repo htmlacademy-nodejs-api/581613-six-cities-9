@@ -16,9 +16,7 @@ export class CreateOfferDto {
   @Length(VALIDATION_RULES.DESCRIPTION_LENGTH.MIN, VALIDATION_RULES.DESCRIPTION_LENGTH.MAX, { message: VALIDATION_MESSAGES.DESCRIPTION_LENGTH.MIN })
   public description: string;
 
-  // TODO: по ТЗ - 5.1.3. Для создания нового предложения по аренде КЛИЕНТ передаёт информацию, указанную в пункте 3.2.
-  // в пункте 3.2 - "Дата публикации предложения. Обязательное."
-  @IsDateString({}, { message: 'неверная дата' })
+  @IsDateString({}, { message: getDefaultInvalidText('postDate') })
   public postDate: Date;
 
   @IsEnum(City, { message: VALIDATION_MESSAGES.CITY.NOT_AVAILABLE })

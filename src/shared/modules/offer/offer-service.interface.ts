@@ -6,8 +6,9 @@ import { UpdateOfferDto } from './dto/update-offer.dto.js';
 import { City } from '../../types/cities.enum.js';
 import { CreateCommentDto } from '../comment/index.js';
 import { DocumentExists } from '../../types/document-exists.interface.js';
+import { DocumentAuthor } from '../../types/document-author.interface.js';
 
-export interface OfferService extends DocumentExists {
+export interface OfferService extends DocumentExists, DocumentAuthor {
   create(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>>;
   findByTitle(title: string): Promise<DocumentType<OfferEntity> | null>;
   findByTitleOrCreate(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>>;
@@ -19,4 +20,5 @@ export interface OfferService extends DocumentExists {
   findPremiumByCity(city: City): Promise<DocumentType<OfferEntity>[] | null>;
   findAllByIds(ids: string[]): Promise<DocumentType<OfferEntity | null>[] | null>;
   exists(id: string): Promise<boolean>;
+  documentAuthor(id: string): Promise<string | null>;
 }

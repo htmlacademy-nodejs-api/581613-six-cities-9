@@ -42,6 +42,10 @@ paths:
         "409":
           description: Пользователь с таким email уже существует.
 
+        "400":
+          description: Пользователь уже авторизован. Регистрация невозможна
+
+
   /users/login:
     post:
       tags:
@@ -65,21 +69,21 @@ paths:
               schema:
                 $ref: "#/components/schemas/user"
 
-        "401":
-          description: Авторизация не пройдена. Проверьте корректность данных
+        "400":
+          description: Проверьте корректность данных
 
+        "404":
+          description: Пользователь с таким email не найден
+
+        "401":
+          description: Неправильно введены email или пароль
+
+  /users/authCheck:
     get:
       tags:
         - users
       summary: Проверка состояния пользователя
       description: Возвращает информацию по авторизованному пользователю
-
-      parameters:
-        - in: query
-          name: userId
-          schema:
-            type: string
-            example: 'assad32'
 
       responses:
         "200":
@@ -108,14 +112,27 @@ paths:
         required: true
 
       responses:
-        "200":
+        "204":
           description: Сессия успешно завершена
 
-        "401":
-          description: Пользователь не авторизован
+  /users/{userId}/avatar:
+    post:
+      tags:
+        - users
+      summary: Загрузить изображение аватара
+      description: Загружает изображение аватара пользователя. Изображение
+        аватара должно быть в формате `png` или `jpg`.
 
-        "404":
-          description: Сессия не может быть завершена, указанный пользователь не существует
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "201":
+          description: Аватар пользователя успешно загружен
 
   /offers:
     get:
@@ -407,17 +424,17 @@ components:
           type: string
           example: keks@htmlacademy.ru
 
-        firstname:
+        name:
           type: string
-          example: Keks
-
-        lastname:
-          type: string
-          example: Cat
+          example: Krotik
 
         password:
           type: string
           example: 123456
+
+        isPro:
+          type: boolean
+          example: false
 
     authorizeUser:
       type: object
@@ -439,13 +456,17 @@ components:
           type: string
           example: keks@htmlacademy.ru
 
-        firstname:
+        name:
           type: string
-          example: Keks
+          example: krotil
 
-        lastname:
+        avatar:
           type: string
-          example: Cat
+          example: avatar.jpg
+
+        isPro:
+          type: boolean
+          example: true
 
     logoutUser:
       type: object
