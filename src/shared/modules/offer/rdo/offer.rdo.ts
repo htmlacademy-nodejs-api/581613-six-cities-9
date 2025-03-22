@@ -6,6 +6,9 @@ import { FeatureType } from '../../../types/features.enum.js';
 
 export class OfferRdo {
   @Expose()
+  public id: string;
+
+  @Expose()
   public title: string;
 
   @Expose()

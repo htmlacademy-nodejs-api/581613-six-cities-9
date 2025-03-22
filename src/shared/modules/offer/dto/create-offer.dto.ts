@@ -1,4 +1,4 @@
-import { IsArray, IsDateString, ValidateNested, IsString, IsEnum, IsNumber, IsMongoId, Max, MinLength, Min, Length, ArrayMaxSize, IsBoolean } from 'class-validator';
+import { IsArray, ValidateNested, IsString, IsEnum, Max, MinLength, Min, Length, ArrayMaxSize, IsBoolean } from 'class-validator';
 import { Type } from 'class-transformer';
 
 import { City } from '../../../types/cities.enum.js';
@@ -16,9 +16,6 @@ export class CreateOfferDto {
   @Length(VALIDATION_RULES.DESCRIPTION_LENGTH.MIN, VALIDATION_RULES.DESCRIPTION_LENGTH.MAX, { message: VALIDATION_MESSAGES.DESCRIPTION_LENGTH.MIN })
   public description: string;
 
-  @IsDateString({}, { message: getDefaultInvalidText('postDate') })
-  public postDate: Date;
-
   @IsEnum(City, { message: VALIDATION_MESSAGES.CITY.NOT_AVAILABLE })
   public city: City;
 
@@ -32,11 +29,6 @@ export class CreateOfferDto {
 
   @IsBoolean({ message: getDefaultInvalidText('premium') })
   public premium: boolean;
-
-  @Min(VALIDATION_RULES.RATING.MIN, { message: VALIDATION_MESSAGES.RATING.MIN })
-  @Max(VALIDATION_RULES.RATING.MAX, { message: VALIDATION_MESSAGES.RATING.MAX })
-  @IsNumber({ maxDecimalPlaces: VALIDATION_RULES.RATING.MAX_DECIMAL_DIGITS }, { message: getDefaultInvalidText('rating') })
-  public rating: number;
 
   @IsEnum(OfferType, { message: getDefaultInvalidText('type') })
   public type: OfferType;
@@ -57,7 +49,6 @@ export class CreateOfferDto {
   @IsEnum(FeatureType, { each: true, message: getDefaultInvalidText('feature') })
   public features: FeatureType[];
 
-  @IsMongoId({ message: getDefaultInvalidText('user') })
   public user: string;
 
   @ValidateNested({ message: getDefaultInvalidText('coordinates') })

@@ -32,7 +32,6 @@ export class TSVOfferGenerator implements OfferGenerator {
       .toISOString();
     const city = getRandomItem<string>(this.mockData.cities);
     const previewImage = getRandomItem<string>(this.mockData.images);
-    const images = getRandomItemsToStringWithSeparator(this.mockData.images);
     const premium = getRandomBoolean();
     const rating = generateRandomValue(MIN_RATING, MAX_RATING, 1);
     const type = getRandomItem(this.mockData.offerTypes);
@@ -47,7 +46,7 @@ export class TSVOfferGenerator implements OfferGenerator {
     const coordinates = generateStringWithSeparatorFromArray([latitude, longitude]);
 
     return [
-      title, description, createdDate, city, previewImage, images, premium, rating, type, roomsCount, guestsCount, price, features, user, commentsCount, coordinates
+      title, description, createdDate, city, previewImage, this.mockData.images, premium, rating, type, roomsCount, guestsCount, price, features, user, commentsCount, coordinates
     ].join(TAB_SEPARATOR);
   }
 }

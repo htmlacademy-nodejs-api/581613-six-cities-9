@@ -1,13 +1,13 @@
 # Пользователи
 ## Создать нового пользователя
 
-POST http://localhost:3000/users/register HTTP/1.1
+POST http://localhost:4000/users/register HTTP/1.1
 Content-Type: application/json
 
 {
   "name": "Plato",
-  "email": "plato@mail.com",
-  "password": "papqaqaq",
+  "email": "platozxz@mail.com",
+  "password": "papq222aqaq",
   "isPro": false,
   "avatar": "string"
 }
@@ -15,19 +15,19 @@ Content-Type: application/json
 ###
 ## Авторизация пользователя
 
-POST http://localhost:3000/users/login HTTP/1.1
+POST http://localhost:4000/users/login HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "plato@mail.com",
-  "password": "papqaqaq"
+  "email": "platozxz@mail.com",
+  "password": "papq222aqaq"
 }
 
 ###
 
 ## Отправить изображение
 
-POST http://localhost:3000/users/67cb46ef04311508baa02ebf/avatar HTTP/1.1
+POST http://localhost:4000/users/avatar HTTP/1.1
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
@@ -40,7 +40,7 @@ Content-Type: image/png
 ###
 
 ## Проверить токен пользователя
-GET http://localhost:3000/users/authCheck HTTP/1.1
+GET http://localhost:4000/users/authCheck HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBsYXRvQG1haWwuY29tIiwibmFtZSI6IlBsYXRvIiwiaWQiOiI2N2Q0NzMwZjVmNjc1ZDc1ZmY0ZWRlNGUiLCJpYXQiOjE3NDE5Nzc1ODEsImV4cCI6MTc0MjE1MDM4MX0.FxzGEY6eZhePp0JUtnawKwCF60j1cL5jXKPkOKxyYjU
 
 ##

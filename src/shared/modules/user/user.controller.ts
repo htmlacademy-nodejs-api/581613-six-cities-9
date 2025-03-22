@@ -10,10 +10,8 @@ import { Config, RestSchema } from '../../libs/config/index.js';
 import { fillDTO } from '../../helpers/index.js';
 import { UserRdo } from './rdo/user.rdo.js';
 import { LoginUserRequest } from './types/login-user-request.type.js';
-import { LogoutUserRequest } from './types/logout-user-request.type.js';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { LoginUserDto } from './dto/login-user.dto.js';
-import { LogoutUserDto } from './dto/logout-user.dto.js';
 import { AuthService } from '../auth/index.js';
 import { LoggedUserRdo } from './rdo/logged-user.rdo.js';
 import { StatusCodes } from 'http-status-codes';
@@ -35,9 +33,8 @@ export class UserController extends BaseController {
       { path: '/register', method: HttpMethod.Post, handler: this.create, middleware: [new ValidateDtoMiddleware(CreateUserDto)] },
       { path: '/login', method: HttpMethod.Post, handler: this.login, middleware: [new ValidateDtoMiddleware(LoginUserDto)] },
       { path: '/authCheck', method: HttpMethod.Get, handler: this.authCheck },
-      { path: '/logout', method: HttpMethod.Post, handler: this.logout, middleware: [new ValidateDtoMiddleware(LogoutUserDto)] },
       {
-        path: '/:userId/avatar',
+        path: '/avatar',
         method: HttpMethod.Post,
         handler: this.uploadAvatar,
         middlewares: [
@@ -100,17 +97,8 @@ export class UserController extends BaseController {
     this.ok(res, fillDTO(LoggedUserRdo, user));
   }
 
-  public async logout(
-    { tokenPayload }: LogoutUserRequest,
-    res: Response,
-  ): Promise<void> {
-    await this.userService.findById(tokenPayload.id);
-
-    this.okNoContent(res);
-  }
-
-  public async uploadAvatar({ params, file }: Request, res: Response) {
-    const { userId } = params;
+  public async uploadAvatar({ file, tokenPayload }: Request, res: Response) {
+    const { id: userId } = tokenPayload;
 
     const uploadFile = { avatarPath: file?.filename };
     await this.userService.updateById(userId, uploadFile);
