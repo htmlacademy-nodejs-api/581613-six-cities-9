@@ -3,6 +3,8 @@ import { OfferGenerator } from './offer-generator.interface.js';
 import { MockServerData } from '../../types/index.js';
 import { generateRandomValue, getRandomItem, generateStringWithSeparatorFromArray, getRandomBoolean, getRandomItemsToStringWithSeparator } from '../../helpers/index.js';
 import { TAB_SEPARATOR } from '../../constants/common.js';
+import { DEFAULT_USER_PASSWORD } from '../../../cli/commands/command.constant.js';
+import { LOCATIONS } from '../../constants/coordinates.js';
 
 const MIN_PRICE = 100;
 const MAX_PRICE = 100000;
@@ -16,11 +18,6 @@ const MIN_GUESTS = 1;
 const MAX_GUESTS = 10;
 const MIN_COMMENTS = 0;
 const MAX_COMMENTS = 50;
-const MIN_COORDS_LATTITUDE = -90;
-const MAX_COORDS_LATTITUDE = 90;
-const MIN_COORDS_LONGITUDE = -180;
-const MAX_COORDS_LONGITUDE = 180;
-const MAX_COORDS_NUM_AFTER_DIGIT = 6;
 
 export class TSVOfferGenerator implements OfferGenerator {
   constructor(private readonly mockData: MockServerData) { }
@@ -39,14 +36,31 @@ export class TSVOfferGenerator implements OfferGenerator {
     const guestsCount = generateRandomValue(MIN_GUESTS, MAX_GUESTS);
     const price = generateRandomValue(MIN_PRICE, MAX_PRICE);
     const features = getRandomItemsToStringWithSeparator(this.mockData.features);
-    const user = getRandomItem(this.mockData.users);
     const commentsCount = generateRandomValue(MIN_COMMENTS, MAX_COMMENTS);
-    const latitude = generateRandomValue(MIN_COORDS_LATTITUDE, MAX_COORDS_LATTITUDE, MAX_COORDS_NUM_AFTER_DIGIT);
-    const longitude = generateRandomValue(MIN_COORDS_LONGITUDE, MAX_COORDS_LONGITUDE, MAX_COORDS_NUM_AFTER_DIGIT);
-    const coordinates = generateStringWithSeparatorFromArray([latitude, longitude]);
+    const coordinates = generateStringWithSeparatorFromArray(LOCATIONS[city]);
+    const userName = getRandomItem(this.mockData.users);
+    const userEmail = userName.split('@')[0];
+    const userPassword = DEFAULT_USER_PASSWORD;
+    const isProUser = getRandomBoolean();
+    const userAvatar = getRandomItem(this.mockData.userAvatars);
 
     return [
-      title, description, createdDate, city, previewImage, this.mockData.images, premium, rating, type, roomsCount, guestsCount, price, features, user, commentsCount, coordinates
+      title,
+      description,
+      createdDate,
+      city,
+      previewImage,
+      this.mockData.images,
+      premium,
+      rating,
+      type,
+      roomsCount,
+      guestsCount,
+      price,
+      features,
+      commentsCount,
+      coordinates,
+      userName, userEmail, userPassword, isProUser, userAvatar
     ].join(TAB_SEPARATOR);
   }
 }

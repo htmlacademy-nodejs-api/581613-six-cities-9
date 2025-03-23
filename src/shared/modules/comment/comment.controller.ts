@@ -27,7 +27,7 @@ export class CommentController extends BaseController {
 
     const routes = [
       { path: '/:offerId', method: HttpMethod.Get, handler: this.index, middlewares: [new ValidateObjectIdMiddleware('offerId'), offerExistsMiddleware] },
-      { path: '/', method: HttpMethod.Post, handler: this.create, middlewares: [new PrivateRouteMiddleware(), new ValidateDtoMiddleware(CreateCommentDto), offerExistsMiddleware] },
+      { path: '/:offerId', method: HttpMethod.Post, handler: this.create, middlewares: [new PrivateRouteMiddleware(), new ValidateObjectIdMiddleware('offerId'), offerExistsMiddleware, new ValidateDtoMiddleware(CreateCommentDto)] },
     ];
 
     this.addRoute(routes);
@@ -42,8 +42,8 @@ export class CommentController extends BaseController {
     this.ok(res, fillDTO(CommentRdo, comments));
   }
 
-  public async create({ body, tokenPayload }: CreateCommentRequest, res: Response): Promise<void> {
-    const comment = await this.commentService.create({ ...body, user: tokenPayload.id });
+  public async create({ body, tokenPayload, params }: CreateCommentRequest, res: Response): Promise<void> {
+    const comment = await this.commentService.create({ ...body, user: tokenPayload.id, offerId: params.offerId });
 
     await this.offerService.addReview(body);
     this.created(res, fillDTO(CommentRdo, comment));

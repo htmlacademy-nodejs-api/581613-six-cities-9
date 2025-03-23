@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { Response, Request } from 'express';
 
-import { BaseController, DocumentExistsMiddleware, HttpError, HttpMethod, UploadFileMiddleware, ValidateDtoMiddleware } from '../../libs/rest/index.js';
+import { BaseController, DocumentExistsMiddleware, HttpError, HttpMethod, PrivateRouteMiddleware, UploadFileMiddleware, ValidateDtoMiddleware } from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
 import { UserService } from './user-service.interface.js';
@@ -30,14 +30,15 @@ export class UserController extends BaseController {
     this.logger.info('Register routes for UserController');
 
     const routes = [
-      { path: '/register', method: HttpMethod.Post, handler: this.create, middleware: [new ValidateDtoMiddleware(CreateUserDto)] },
-      { path: '/login', method: HttpMethod.Post, handler: this.login, middleware: [new ValidateDtoMiddleware(LoginUserDto)] },
-      { path: '/authCheck', method: HttpMethod.Get, handler: this.authCheck },
+      { path: '/register', method: HttpMethod.Post, handler: this.create, middlewares: [new ValidateDtoMiddleware(CreateUserDto)] },
+      { path: '/login', method: HttpMethod.Post, handler: this.login, middlewares: [new ValidateDtoMiddleware(LoginUserDto)] },
+      { path: '/authCheck', method: HttpMethod.Get, handler: this.authCheck, middlewares: [new PrivateRouteMiddleware()]},
       {
         path: '/avatar',
         method: HttpMethod.Post,
         handler: this.uploadAvatar,
         middlewares: [
+          new PrivateRouteMiddleware(),
           new DocumentExistsMiddleware(this.userService, 'User', 'userId'),
           new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'avatar'),
         ]

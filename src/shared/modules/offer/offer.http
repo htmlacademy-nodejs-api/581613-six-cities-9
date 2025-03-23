@@ -53,7 +53,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBsYXRvenh6QG1haWwuY29tI
 
 ###
 
-GET http://localhost:4000/offers/67dfc267bf38ea61a229aec7 HTTP/1.1
+GET http://localhost:4000/offers/67e059d1f810ded07bfbc848 HTTP/1.1
 Content-Type: application/json
 
 ###

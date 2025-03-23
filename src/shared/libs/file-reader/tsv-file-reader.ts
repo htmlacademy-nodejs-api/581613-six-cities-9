@@ -2,7 +2,7 @@ import EventEmitter from 'node:events';
 import { createReadStream } from 'node:fs';
 
 import { FileReader } from './file-reader.interface.js';
-import { FeatureType, Offer, OfferType, Coordinates, City } from '../../types/index.js';
+import { FeatureType, Offer, OfferType, Coordinates, City, User } from '../../types/index.js';
 import { COMMA_SEPARATOR, NEXT_LINE_SEPARATOR, TAB_SEPARATOR } from '../../constants/index.js';
 
 export class TSVFileReader extends EventEmitter implements FileReader {
@@ -29,9 +29,13 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       guestsCount,
       price,
       features,
-      user,
       commentsCount,
-      coordinates
+      coordinates,
+      userName,
+      userEmail,
+      userPassword,
+      isPro,
+      userAvatar
     ] = line.split(TAB_SEPARATOR);
 
     return {
@@ -48,9 +52,25 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       guestsCount: Number(guestsCount),
       price: Number(price),
       features: this.parseFeatures(features),
-      user,
+      user: this.parseUser(userName, userEmail, userPassword, this.parseBoolean(isPro), userAvatar),
       commentsCount: Number(commentsCount),
       coordinates: this.parseCoordinates(coordinates),
+    };
+  }
+
+  private parseUser(
+    name: string,
+    email: string,
+    password: string,
+    isPro: boolean,
+    avatar: string,
+  ): User {
+    return {
+      name,
+      email,
+      password,
+      isPro,
+      avatar,
     };
   }
 

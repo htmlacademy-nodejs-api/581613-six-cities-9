@@ -401,6 +401,13 @@ paths:
               $ref: "#/components/schemas/createComment"
         required: true
 
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: string
+
       responses:
         "201":
           description: Комментарий успешно создан
@@ -703,10 +710,6 @@ components:
         text:
           type: string
           example: Very wonderful apartments
-
-        offerId:
-          type: string
-          example: 67dfcd969e13e117612e80d6
 
         rating:
           type: number

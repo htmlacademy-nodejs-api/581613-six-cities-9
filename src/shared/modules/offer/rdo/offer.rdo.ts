@@ -1,8 +1,9 @@
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { City } from '../../../types/cities.enum.js';
 import { Coordinates } from '../../../types/coordinates.type.js';
 import { OfferType } from '../../../types/offer-type.enum.js';
 import { FeatureType } from '../../../types/features.enum.js';
+import { UserRdo } from '../../user/rdo/user.rdo.js';
 
 export class OfferRdo {
   @Expose()
@@ -48,7 +49,8 @@ export class OfferRdo {
   public features: FeatureType[];
 
   @Expose()
-  public user: string;
+  @Type(() => UserRdo)
+  public user: UserRdo;
 
   @Expose()
   public coordinates: Coordinates;

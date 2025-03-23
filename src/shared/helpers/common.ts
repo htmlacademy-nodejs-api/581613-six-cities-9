@@ -7,8 +7,8 @@ export function generateRandomValue(min: number, max: number, numAfterDigit = 0)
 }
 export function getRandomItems<T>(items: T[]): T[] {
   const startPosition = generateRandomValue(0, items.length - 1);
-  const endPosition = startPosition + generateRandomValue(startPosition, items.length - 1);
-  return items.slice(startPosition, endPosition === startPosition ? startPosition + 1 : endPosition);
+  const endPosition = startPosition + generateRandomValue(startPosition + 1, items.length - 1);
+  return items.slice(startPosition, endPosition);
 }
 
 export function generateStringWithSeparatorFromArray<T>(items: T[]): string {

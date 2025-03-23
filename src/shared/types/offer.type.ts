@@ -2,6 +2,7 @@ import { City } from './cities.enum.js';
 import { Coordinates } from './coordinates.type.js';
 import { FeatureType } from './features.enum.js';
 import { OfferType } from './offer-type.enum.js';
+import { User } from './user.type.js';
 
 export type Offer = {
   title: string;
@@ -16,7 +17,7 @@ export type Offer = {
   guestsCount: number;
   price: number;
   features: FeatureType[];
-  user: string;
+  user: User;
   coordinates: Coordinates
   commentsCount?: number;
   postDate?: Date;

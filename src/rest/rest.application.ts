@@ -1,5 +1,6 @@
 import { inject, injectable } from 'inversify';
 import express from 'express';
+import cors from 'cors';
 
 import { Logger } from '../shared/libs/logger/index.js';
 import { Config, RestSchema } from '../shared/libs/config/index.js';
@@ -69,6 +70,7 @@ export class RestApplication {
       express.static(this.config.get('STATIC_DIRECTORY_PATH'))
     );
     this.server.use(authenticateMiddleware.execute.bind(authenticateMiddleware));
+    this.server.use(cors());
 
     this.logger.info('App-level middleware initialization completed');
   }

@@ -94,6 +94,6 @@ export class DefaultOfferService implements OfferService {
       return null;
     }
 
-    return offer.user;
+    return offer.user.id;
   }
 }

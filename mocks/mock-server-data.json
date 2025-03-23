@@ -47,12 +47,20 @@
       "Fridge"
     ],
     "users": [
-      "John Doe",
-      "Leroy Jenkins",
-      "Arthas Menethil",
-      "Bilbo Baggins",
-      "Adam Warlock",
-      "Tali Zora"
+      "JohnDoe@mail.ru",
+      "LeroyJenkins@ya.ru",
+      "ArthasMenethil@google.com",
+      "BilboBaggins@yaahoo.com",
+      "AdamWarlock@rambler.com",
+      "TaliZora@rambler.com"
+    ],
+    "userAvatars": [
+      "JohnDoe.jpg",
+      "LeroyJenkins.jpg",
+      "ArthasMenethil.jpg",
+      "BilboBaggins.jpg",
+      "AdamWarlock.jpg",
+      "TaliZora.jpg"
     ]
   }
 }
