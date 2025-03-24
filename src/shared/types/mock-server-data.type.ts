@@ -10,4 +10,5 @@ export type MockServerData = {
   offerTypes: OfferType[];
   features: FeatureType[];
   users: string[];
+  userAvatars: string[];
 };

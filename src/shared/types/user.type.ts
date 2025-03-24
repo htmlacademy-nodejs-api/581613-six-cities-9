@@ -1,8 +1,8 @@
 export type User = {
   name: string;
   email: string;
-  password: string;
   isPro: boolean;
+  password: string;
   avatar?: string;
   favourites?: string[]
 }

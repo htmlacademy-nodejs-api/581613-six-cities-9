@@ -2,16 +2,19 @@ import { Command } from './command.interface.js';
 import { TSVFileReader } from '../../shared/libs/file-reader/index.js';
 import { Offer } from '../../shared/types/offer.type.js';
 import { getErrorMessage, getMongoURI } from '../../shared/helpers/index.js';
+import { DefaultUserService, UserModel } from '../../shared/modules/user/index.js';
 import { DefaultOfferService, OfferModel } from '../../shared/modules/offer/index.js';
 import { MongoDatabaseClient } from '../../shared/libs/database-client/index.js';
 import { PinoLogger } from '../../shared/libs/logger/pino.logger.js';
-import { DEFAULT_DB_PORT } from './command.constant.js';
+import { DEFAULT_DB_PORT, DEFAULT_USER_PASSWORD } from './command.constant.js';
 
 export class ImportCommand implements Command {
   public readonly name = '--import';
   private logger = new PinoLogger();
   private offerService = new DefaultOfferService(this.logger, OfferModel);
+  private userService = new DefaultUserService(this.logger, UserModel);
   private databaseClient = new MongoDatabaseClient(this.logger);
+  private salt = 'secret';
 
   constructor() {
     this.onImportedOffer = this.onImportedOffer.bind(this);
@@ -24,21 +27,24 @@ export class ImportCommand implements Command {
   }
 
   private async saveOffer(offer: Offer) {
+    const user = await this.userService.findByEmailOrCreate({
+      ...offer.user,
+      password: DEFAULT_USER_PASSWORD
+    }, this.salt);
+
     await this.offerService.create({
       title: offer.title,
       description: offer.description,
-      postDate: offer.postDate || new Date(),
       city: offer.city,
       previewImage: offer.previewImage,
       images: offer.images,
       premium: offer.premium,
-      rating: offer.rating,
       type: offer.type,
       roomsCount: offer.roomsCount,
       guestsCount: offer.guestsCount,
       price: offer.price,
       features: offer.features,
-      user: offer.user,
+      user: user.id,
       coordinates: offer.coordinates
     });
   }

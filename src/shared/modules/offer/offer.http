@@ -1,79 +1,74 @@
 # Категории
-## Получить список категорий
-GET http://localhost:3000/offers HTTP/1.1
+## Получить список предложений
+GET http://localhost:4000/offers HTTP/1.1
 Content-Type: application/json
 
 ###
 
-POST http://localhost:3000/offers HTTP/1.1
+POST http://localhost:4000/offers HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBsYXRvQG1haWwuY29tIiwibmFtZSI6IlBsYXRvIiwiaWQiOiI2N2Q0NzMwZjVmNjc1ZDc1ZmY0ZWRlNGUiLCJpYXQiOjE3NDE5Nzc1ODEsImV4cCI6MTc0MjE1MDM4MX0.FxzGEY6eZhePp0JUtnawKwCF60j1cL5jXKPkOKxyYjU
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBsYXRvenh6QG1haWwuY29tIiwibmFtZSI6IlBsYXRvIiwiaWQiOiI2N2RmY2I2NThkZDAzOTU2NjkzM2RmNzYiLCJpYXQiOjE3NDI3MTk4NDksImV4cCI6MTc0Mjg5MjY0OX0.IymgXM7343BYCk6zxBwVwPh5sLgtO81q9SVmj75mny0
 
 {
-  "title": "dasaa",
-  "description": "string",
+  "title": "super puper title",
+  "description": "Paris 1313 Paris Paris",
   "city": "Paris",
   "previewImage": "string",
-  "images": "['inage']",
-  "premium": "false",
-  "rating": "2",
+  "images":  ["apartment-01.jpg", "apartment-02.jpg", "apartment-03.jpg", "apartment-04.jpg", "apartment-05.jpg", "apartment-06.jpg"],
+  "premium": true,
   "type": "apartment",
-  "roomsCount": "1",
-  "guestsCount": "2",
-  "price": "123",
-  "features": "Washer",
-  "user": "67c73ae2be6a51f4f1c09d8f",
-  "coordinates": "{ lattitude: 11.2221, longitude: 22.1212 }"
+  "roomsCount": 1,
+  "guestsCount": 2,
+  "price": 123,
+  "features": ["Breakfast", "Washer", "Fridge", "Air Conditioning"],
+  "coordinates": { "latitude": 48.85669, "longitude": 2.351500 }
 }
 
 ###
 
-GET http://localhost:3000/offers/premium/?city=Hamburg HTTP/1.1
+GET http://localhost:4000/offers/premium/?city=Paris HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBsYXRvQG1haWwuY29tIiwibmFtZSI6IlBsYXRvIiwiaWQiOiI2N2Q0NzMwZjVmNjc1ZDc1ZmY0ZWRlNGUiLCJpYXQiOjE3NDI3MTU5NDgsImV4cCI6MTc0Mjg4ODc0OH0.IrEcTkWZ7rB3nUSwkUrdHj4GH13LEI1tAn3Mrqks0Qg
+
 Content-Type: application/json
 
 ###
 
-GET http://localhost:3000/offers/favourites/?userId=67c73ae2be6a51f4f1c09d8f HTTP/1.1
+GET http://localhost:4000/offers/favourites/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBsYXRvenh6QG1haWwuY29tIiwibmFtZSI6IlBsYXRvIiwiaWQiOiI2N2RmY2I2NThkZDAzOTU2NjkzM2RmNzYiLCJpYXQiOjE3NDI3MTk4NDksImV4cCI6MTc0Mjg5MjY0OX0.IymgXM7343BYCk6zxBwVwPh5sLgtO81q9SVmj75mny0
+
 Content-Type: application/json
 
 ###
 
-POST http://localhost:3000/offers/favourites HTTP/1.1
+POST http://localhost:4000/offers/favourites/67dfcd47a25ee5f9f1ce6d92 HTTP/1.1
 Content-Type: application/json
-
-{
-  "userId": "67c73ae2be6a51f4f1c09d8f",
-  "offerId": "67c5f2ad111a4e4f1d94bd96"
-}
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBsYXRvenh6QG1haWwuY29tIiwibmFtZSI6IlBsYXRvIiwiaWQiOiI2N2RmY2I2NThkZDAzOTU2NjkzM2RmNzYiLCJpYXQiOjE3NDI3MTk4NDksImV4cCI6MTc0Mjg5MjY0OX0.IymgXM7343BYCk6zxBwVwPh5sLgtO81q9SVmj75mny0
 
 ###
 
-DELETE http://localhost:3000/offers/favourites HTTP/1.1
+DELETE http://localhost:4000/offers/favourites/67dfcd47a25ee5f9f1ce6d92 HTTP/1.1
 Content-Type: application/json
-
-{
-  "userId": "67c73ae2be6a51f4f1c09d8f",
-  "offerId": "67c5f2ad111a4e4f1d94bd96"
-}
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBsYXRvenh6QG1haWwuY29tIiwibmFtZSI6IlBsYXRvIiwiaWQiOiI2N2RmY2I2NThkZDAzOTU2NjkzM2RmNzYiLCJpYXQiOjE3NDI3MTk4NDksImV4cCI6MTc0Mjg5MjY0OX0.IymgXM7343BYCk6zxBwVwPh5sLgtO81q9SVmj75mny0
 
 
 ###
 
-GET http://localhost:3000/offers/67c75f8dc22c303f31935cf4 HTTP/1.1
-Content-Type: application/json
-
-###
-
-###
-
-DELETE http://localhost:3000/offers/67c75f8dc22c303f31935cf4 HTTP/1.1
+GET http://localhost:4000/offers/67e059d1f810ded07bfbc848 HTTP/1.1
 Content-Type: application/json
 
 ###
 
 ###
 
-PATCH http://localhost:3000/offers/67c75f8dc22c303f31935cf4 HTTP/1.1
+DELETE http://localhost:4000/offers/67dfc267bf38e161a229aec7 HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBsYXRvenh6QG1haWwuY29tIiwibmFtZSI6IlBsYXRvIiwiaWQiOiI2N2RmY2ExZDhkZDAzOTU2NjkzM2RmNWYiLCJpYXQiOjE3NDI3MTk2MDUsImV4cCI6MTc0Mjg5MjQwNX0.xBfUj63vqP19NqwhEp7tQxn8FDyiZ38d5VE_zCW3LXI
+###
+
+###
+
+PATCH http://localhost:4000/offers/67dfc267bf38e161a229aec7 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBsYXRvenh6QG1haWwuY29tIiwibmFtZSI6IlBsYXRvIiwiaWQiOiI2N2RmY2ExZDhkZDAzOTU2NjkzM2RmNWYiLCJpYXQiOjE3NDI3MTk2MDUsImV4cCI6MTc0Mjg5MjQwNX0.xBfUj63vqP19NqwhEp7tQxn8FDyiZ38d5VE_zCW3LXI
 Content-Type: application/json
 
 {

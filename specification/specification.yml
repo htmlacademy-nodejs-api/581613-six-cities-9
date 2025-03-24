@@ -45,7 +45,6 @@ paths:
         "400":
           description: Пользователь уже авторизован. Регистрация невозможна
 
-
   /users/login:
     post:
       tags:
@@ -95,25 +94,6 @@ paths:
 
         "404":
           description: Запрошенный пользователь не существует
-
-  /users/logout:
-    post:
-      tags:
-        - users
-      summary: Завершение сессии для пользователя
-      description: Завершает пользовательскую сессию для авторизованного пользователя
-
-      requestBody:
-        description: Данные об авторизованном пользователе.
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/logoutUser"
-        required: true
-
-      responses:
-        "204":
-          description: Сессия успешно завершена
 
   /users/{userId}/avatar:
     post:
@@ -210,19 +190,15 @@ paths:
                 items:
                   $ref: "#/components/schemas/offer"
 
+        "400":
+          description: Не все обязательные данные переданы, или переданы некорректно
+
   /offers/favourites:
     get:
       tags:
         - offers
       summary: Список предложений добавленных пользователем в избранное
       description: Предоставляет список предложений добавленных пользователем в избранное
-
-      parameters:
-        - in: query
-          name: userId
-          schema:
-            type: string
-            example: axsa3232ds
 
       responses:
         "200":
@@ -234,6 +210,9 @@ paths:
                 items:
                   $ref: "#/components/schemas/offer"
 
+        "404":
+          description: Пользователь не найден
+
         "401":
           description: Список избранных предложений доступен только для авторизованных пользователей
 
@@ -243,13 +222,12 @@ paths:
       summary: Добавление предложения в список избранных
       description: Добавляет предложения в список избранных
 
-      requestBody:
-        description: Данные о пользователе и предложении.
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/favouriteOffer"
-        required: true
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: string
 
       responses:
         "204":
@@ -258,19 +236,21 @@ paths:
         "401":
           description: Список избранных предложений доступен только для авторизованных пользователей
 
+        "404":
+          description: Предложение не найдено
+
     delete:
       tags:
         - offers
       summary: Удаление предложения из списка избранных
       description: Удаляет предложения из списка избранных
 
-      requestBody:
-        description: Данные о пользователе и предложении.
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/favouriteOffer"
-        required: true
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: string
 
       responses:
         "204":
@@ -278,6 +258,9 @@ paths:
 
         "401":
           description: Список избранных предложений доступен только для авторизованных пользователей
+
+        "404":
+          description: Предложение не найдено
 
   /offers/{offerId}:
     get:
@@ -300,6 +283,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/offer"
+
+        "404":
+          description: Предложение не найдено
 
     patch:
       tags:
@@ -339,6 +325,9 @@ paths:
         "403":
           description: Редактировать предложения другого пользователя не разрешено
 
+        "404":
+          description: Предложение не найдено
+
     delete:
       tags:
         - offers
@@ -362,6 +351,9 @@ paths:
         "403":
           description: Удалять предложения другого пользователя не разрешено
 
+        "404":
+          description: Предложение не найдено
+
   /comments:
     get:
       tags:
@@ -370,11 +362,17 @@ paths:
       description: Предоставляет список комментариев о предложении по аренде
 
       parameters:
-        - in: query
+        - in: path
           name: offerId
+          required: true
           schema:
             type: string
-            example: '32d3sdq12'
+
+        - in: query
+          name: count
+          schema:
+            type: number
+            example: 65
 
       responses:
         "200":
@@ -385,6 +383,9 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/comment"
+
+        "404":
+          description: Предложение не найдено
 
     post:
       tags:
@@ -400,6 +401,13 @@ paths:
               $ref: "#/components/schemas/createComment"
         required: true
 
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: string
+
       responses:
         "201":
           description: Комментарий успешно создан
@@ -412,7 +420,10 @@ paths:
           description: Не все обязательные данные переданы, или переданы некорректно
 
         "401":
-          description: Создавать предложения могут только авторизованные пользователи
+          description: Добавлять комментарии могут только авторизованные пользователи
+
+        "404":
+          description: Предложение не найдено
 
 components:
   schemas:
@@ -600,18 +611,6 @@ components:
           type: object
           example: {  latitude: 22.4432, longitude: 12.4432 }
 
-    favouriteOffer:
-      type: object
-
-      properties:
-        offerId:
-          type: string
-          example: xz1232feszgeg
-
-        userId:
-          type: string
-          example: xz1232feszgeg
-
     offer:
       type: object
 
@@ -712,7 +711,6 @@ components:
           type: string
           example: Very wonderful apartments
 
-        author:
-          type: string
-          example: ji@jiji.ru
-
+        rating:
+          type: number
+          example: 3

@@ -1,13 +1,12 @@
-import { IsMongoId, Min, Max, Length } from 'class-validator';
+import { Min, Max, MinLength, MaxLength } from 'class-validator';
 
-import { getDefaultInvalidText } from '../../../helpers/common.js';
 import { VALIDATION_MESSAGES, VALIDATION_RULES } from './comment.validation.js';
 
 export class CreateCommentDto {
-  @IsMongoId({ message: getDefaultInvalidText('offerId') })
   public offerId: string;
 
-  @Length(VALIDATION_RULES.TEXT.MIN, VALIDATION_RULES.TEXT.MAX, { message: VALIDATION_MESSAGES.TEXT.MIN })
+  @MinLength(VALIDATION_RULES.TEXT.MIN, { message: VALIDATION_MESSAGES.TEXT.MIN })
+  @MaxLength(VALIDATION_RULES.TEXT.MAX, { message: VALIDATION_MESSAGES.TEXT.MAX })
   public text: string;
 
   @Min(VALIDATION_RULES.RATING.MIN, { message: VALIDATION_MESSAGES.RATING.MIN })

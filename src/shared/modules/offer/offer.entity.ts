@@ -1,6 +1,6 @@
-import { defaultClasses, getModelForClass, prop, modelOptions } from '@typegoose/typegoose';
+import { defaultClasses, getModelForClass, prop, modelOptions, Ref } from '@typegoose/typegoose';
 
-import { City, Coordinates, FeatureType, Offer, OfferType } from '../../types/index.js';
+import { City, Coordinates, FeatureType, OfferType } from '../../types/index.js';
 import { UserEntity } from '../user/user.entity.js';
 
 @modelOptions({
@@ -9,7 +9,7 @@ import { UserEntity } from '../user/user.entity.js';
     timestamps: true,
   }
 })
-export class OfferEntity extends defaultClasses.TimeStamps implements Offer {
+export class OfferEntity extends defaultClasses.TimeStamps {
   @prop({ required: true })
   public title: string;
 
@@ -46,7 +46,7 @@ export class OfferEntity extends defaultClasses.TimeStamps implements Offer {
     default: {},
     _id: false
   })
-  public user: string;
+  public user: Ref<UserEntity>;
 
   @prop({ required: true })
   public price: number;

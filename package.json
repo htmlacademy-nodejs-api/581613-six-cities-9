@@ -17,14 +17,14 @@
     "clean": "rimraf dist",
     "ts": "tsc --noEmit && node --no-warnings=--no-warnings=ExperimentalWarning --loader ts-node/esm",
     "rest:build": "npm run build && node ./dist/main.rest.js",
-    "cli:import": "npm run build && node ./dist/main.cli.js --import ./mocks/mock-data.tsv",
-    "cli:import:database": "npm run ts ./src/main.cli.ts -- --import ./mocks/mock-data.tsv admin test localhost six-sities",
+    "cli:import:database": "npm run ts ./src/main.cli.ts -- --import ./mocks/test-data.tsv admin test localhost six-cities",
     "mock:server": "json-server ./mocks/mock-server-data.json --port 3123 --host localhost",
-    "mock:generate:tsv": "npm run ts ./src/main.cli.ts -- --generate 10000 ./mocks/test-data.tsv http://localhost:3123/api"
+    "mock:generate:tsv": "npm run ts ./src/main.cli.ts -- --generate 100 ./mocks/test-data.tsv http://localhost:3123/api"
   },
   "devDependencies": {
     "@types/convict": "^6.1.6",
     "@types/convict-format-with-validator": "^6.0.5",
+    "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/mime-types": "^2.1.4",
     "@types/multer": "^1.4.12",
@@ -53,6 +53,7 @@
     "class-validator": "^0.14.1",
     "convict": "^6.2.4",
     "convict-format-with-validator": "^6.2.0",
+    "cors": "^2.8.5",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",

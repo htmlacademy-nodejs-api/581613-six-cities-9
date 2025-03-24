@@ -62,8 +62,9 @@ export class DefaultOfferService implements OfferService {
 
     return this.offerModel
       .findByIdAndUpdate(offerId, {
-        ...offer,
-        rating: offer?.rating ? ((Number(offer?.rating) + rating) / NUMBER_HALF_SEPARATOR).toFixed(RATING_DECIMAL_PLACES_NUMBER) : rating,
+        '$set': {
+          rating: offer?.rating ? ((Number(offer?.rating) + rating) / NUMBER_HALF_SEPARATOR).toFixed(RATING_DECIMAL_PLACES_NUMBER) : rating,
+        },
         '$inc': {
           commentsCount: COMMENTS_INCREMENT,
         },
@@ -93,6 +94,6 @@ export class DefaultOfferService implements OfferService {
       return null;
     }
 
-    return offer.user;
+    return offer.user.id;
   }
 }
