@@ -4,5 +4,5 @@ export type User = {
   isPro: boolean;
   password: string;
   avatar?: string;
-  favourites?: string[]
+  favorites?: string[]
 }

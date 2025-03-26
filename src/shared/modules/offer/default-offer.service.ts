@@ -38,7 +38,7 @@ export class DefaultOfferService implements OfferService {
   public async findByTitleOrCreate(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>> {
     const offer = await this.findByTitle(dto.title);
 
-    return offer ?? this.create(dto);
+    return offer ?? await this.create(dto);
   }
 
   public async findAll(limit = DEFAULT_OFFERS_COUNT): Promise<DocumentType<OfferEntity>[]> {

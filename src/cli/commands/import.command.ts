@@ -10,11 +10,11 @@ import { DEFAULT_DB_PORT, DEFAULT_USER_PASSWORD } from './command.constant.js';
 
 export class ImportCommand implements Command {
   public readonly name = '--import';
-  private logger = new PinoLogger();
-  private offerService = new DefaultOfferService(this.logger, OfferModel);
-  private userService = new DefaultUserService(this.logger, UserModel);
-  private databaseClient = new MongoDatabaseClient(this.logger);
-  private salt = 'secret';
+  private readonly logger = new PinoLogger();
+  private readonly offerService = new DefaultOfferService(this.logger, OfferModel);
+  private readonly userService = new DefaultUserService(this.logger, UserModel);
+  private readonly databaseClient = new MongoDatabaseClient(this.logger);
+  private readonly salt = 'secret';
 
   constructor() {
     this.onImportedOffer = this.onImportedOffer.bind(this);

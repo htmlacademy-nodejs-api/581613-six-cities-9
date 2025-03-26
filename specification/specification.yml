@@ -679,7 +679,7 @@ components:
           type: number
           example: 0
 
-        isFavourite:
+        isFavorite:
           type: number
           example: 0
 

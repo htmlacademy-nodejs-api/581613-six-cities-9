@@ -20,9 +20,5 @@ export const VALIDATION_MESSAGES = {
   PASSWORD: {
     MIN: `password cannot be less than ${VALIDATION_RULES.PASSWORD.MIN}`,
     MAX: `password cannot be more  than ${VALIDATION_RULES.PASSWORD.MAX}`,
-  },
-
-  AVATAR: {
-    FILE_EXTENSION: 'not correct extension. only jpg or png'
   }
 };

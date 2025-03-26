@@ -52,7 +52,7 @@ export class RestApplication {
     this.logger.info('Init exception filters');
     this.server.use(this.authExceptionFilter.catch.bind(this.authExceptionFilter));
     this.server.use(this.appExceptionFilter.catch.bind(this.appExceptionFilter));
-    this.logger.info('Exception filters initialization compleated');
+    this.logger.info('Exception filters initialization completed');
   }
 
   private async initMiddleware() {

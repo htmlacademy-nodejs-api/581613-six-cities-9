@@ -48,9 +48,9 @@ export class OfferController extends BaseController {
       { path: '/', method: HttpMethod.Get, handler: this.index },
       { path: '/', method: HttpMethod.Post, handler: this.create, middlewares: [privateRouteMiddleware, new ValidateDtoMiddleware(CreateOfferDto)] },
       { path: '/premium', method: HttpMethod.Get, handler: this.premium },
-      { path: '/favourites', method: HttpMethod.Get, handler: this.getFavourites, middlewares: [privateRouteMiddleware] },
-      { path: '/favourites/:offerId', method: HttpMethod.Post, handler: this.addFavourites, middlewares: [privateRouteMiddleware, offerExistsMiddleware] },
-      { path: '/favourites/:offerId', method: HttpMethod.Delete, handler: this.deleteFavourites, middlewares: [privateRouteMiddleware, offerExistsMiddleware] },
+      { path: '/favorites', method: HttpMethod.Get, handler: this.getFavorites, middlewares: [privateRouteMiddleware] },
+      { path: '/favorites/:offerId', method: HttpMethod.Post, handler: this.addFavorites, middlewares: [privateRouteMiddleware, offerExistsMiddleware] },
+      { path: '/favorites/:offerId', method: HttpMethod.Delete, handler: this.deleteFavorites, middlewares: [privateRouteMiddleware, offerExistsMiddleware] },
       {
         path: '/:offerId', method: HttpMethod.Get, handler: this.item,
         middlewares: [validateOfferIdMiddleware, offerExistsMiddleware]
@@ -87,8 +87,6 @@ export class OfferController extends BaseController {
         'City is undefined',
         'OfferController',
       );
-
-      return;
     }
 
     const offers = await this.offerService.findPremiumByCity(query.city);
@@ -96,7 +94,7 @@ export class OfferController extends BaseController {
     this.ok(res, fillDTO(OfferRdo, offers));
   }
 
-  public async getFavourites({ tokenPayload }: Request, res: Response): Promise<void> {
+  public async getFavorites({ tokenPayload }: Request, res: Response): Promise<void> {
     const user = await this.userService.findById(tokenPayload.id);
 
     if (!user) {
@@ -107,19 +105,19 @@ export class OfferController extends BaseController {
       );
     }
 
-    const offers = await this.offerService.findAllByIds(user.favourites);
+    const offers = await this.offerService.findAllByIds(user.favorites);
 
     this.ok(res, fillDTO(OfferRdo, offers));
   }
 
-  public async addFavourites({ params, tokenPayload }: OfferRequestParams, res: Response): Promise<void> {
-    await this.userService.changeFavouriteOffer(tokenPayload.id, params.offerId, false);
+  public async addFavorites({ params, tokenPayload }: OfferRequestParams, res: Response): Promise<void> {
+    await this.userService.changeFavoriteOffer(tokenPayload.id, params.offerId, false);
 
     this.okNoContent(res);
   }
 
-  public async deleteFavourites({ params, tokenPayload }: OfferRequestParams, res: Response): Promise<void> {
-    await this.userService.changeFavouriteOffer(tokenPayload.id, params.offerId, true);
+  public async deleteFavorites({ params, tokenPayload }: OfferRequestParams, res: Response): Promise<void> {
+    await this.userService.changeFavoriteOffer(tokenPayload.id, params.offerId, true);
 
     this.okNoContent(res);
   }

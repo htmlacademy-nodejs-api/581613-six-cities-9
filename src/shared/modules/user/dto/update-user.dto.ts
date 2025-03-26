@@ -9,5 +9,5 @@ export class UpdateUserDto {
 
   @IsOptional()
   @Matches(VALIDATION_RULES.AVATAR.FILE_EXTENSION, { message: VALIDATION_MESSAGES.PASSWORD.MIN })
-  public avatarPath?: string;
+  public avatar?: string;
 }

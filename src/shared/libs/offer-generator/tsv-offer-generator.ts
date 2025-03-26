@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { OfferGenerator } from './offer-generator.interface.js';
-import { MockServerData } from '../../types/index.js';
+import { City, MockServerData } from '../../types/index.js';
 import { generateRandomValue, getRandomItem, generateStringWithSeparatorFromArray, getRandomBoolean, getRandomItemsToStringWithSeparator } from '../../helpers/index.js';
 import { TAB_SEPARATOR } from '../../constants/common.js';
 import { DEFAULT_USER_PASSWORD } from '../../../cli/commands/command.constant.js';
@@ -27,7 +27,7 @@ export class TSVOfferGenerator implements OfferGenerator {
     const createdDate = dayjs()
       .subtract(generateRandomValue(FIRST_WEEK_DAY, LAST_WEEK_DAY), 'day')
       .toISOString();
-    const city = getRandomItem<string>(this.mockData.cities);
+    const city = getRandomItem<string>(this.mockData.cities) as City;
     const previewImage = getRandomItem<string>(this.mockData.images);
     const premium = getRandomBoolean();
     const rating = generateRandomValue(MIN_RATING, MAX_RATING, 1);
@@ -38,8 +38,8 @@ export class TSVOfferGenerator implements OfferGenerator {
     const features = getRandomItemsToStringWithSeparator(this.mockData.features);
     const commentsCount = generateRandomValue(MIN_COMMENTS, MAX_COMMENTS);
     const coordinates = generateStringWithSeparatorFromArray(LOCATIONS[city]);
-    const userName = getRandomItem(this.mockData.users);
-    const userEmail = userName.split('@')[0];
+    const userEmail = getRandomItem(this.mockData.users);
+    const userName = userEmail.split('@')[0];
     const userPassword = DEFAULT_USER_PASSWORD;
     const isProUser = getRandomBoolean();
     const userAvatar = getRandomItem(this.mockData.userAvatars);
