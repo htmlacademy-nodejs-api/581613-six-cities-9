@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { Response, Request } from 'express';
 
-import { BaseController, DocumentExistsMiddleware, HttpError, HttpMethod, PrivateRouteMiddleware, UploadFileMiddleware, ValidateDtoMiddleware } from '../../libs/rest/index.js';
+import { BaseController, HttpError, HttpMethod, PrivateRouteMiddleware, UploadFileMiddleware, ValidateDtoMiddleware } from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
 import { UserService } from './user-service.interface.js';
@@ -13,7 +13,6 @@ import { LoginUserRequest } from './types/login-user-request.type.js';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { LoginUserDto } from './dto/login-user.dto.js';
 import { AuthService } from '../auth/index.js';
-import { LoggedUserRdo } from './rdo/logged-user.rdo.js';
 import { StatusCodes } from 'http-status-codes';
 import { UploadUserAvatarRdo } from './rdo/upload-user-avatar.rdo.js';
 
@@ -39,7 +38,6 @@ export class UserController extends BaseController {
         handler: this.uploadAvatar,
         middlewares: [
           new PrivateRouteMiddleware(),
-          new DocumentExistsMiddleware(this.userService, 'User', 'userId'),
           new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'avatar'),
         ]
       }];
@@ -76,8 +74,8 @@ export class UserController extends BaseController {
   ): Promise<void> {
     const user = await this.authService.verify(body);
     const token = await this.authService.authenticate(user);
-    const responseData = fillDTO(LoggedUserRdo, {
-      email: user.email,
+    const responseData = fillDTO(UserRdo, {
+      ...user,
       token,
     });
 
@@ -95,15 +93,15 @@ export class UserController extends BaseController {
       );
     }
 
-    this.ok(res, fillDTO(LoggedUserRdo, user));
+    this.ok(res, fillDTO(UserRdo, user));
   }
 
   public async uploadAvatar({ file, tokenPayload }: Request, res: Response) {
     const { id: userId } = tokenPayload;
 
-    const uploadFile = { avatarPath: file?.filename };
+    const uploadFile = { avatar: file?.filename };
     await this.userService.updateById(userId, uploadFile);
 
-    this.created(res, fillDTO(UploadUserAvatarRdo, { filepath: uploadFile.avatarPath }));
+    this.created(res, fillDTO(UploadUserAvatarRdo, { filepath: uploadFile.avatar }));
   }
 }

@@ -103,7 +103,9 @@ export class TSVFileReader extends EventEmitter implements FileReader {
 
     for await (const chunk of readStream) {
       remainingData += chunk.toString();
-      while ((nextLinePosition = remainingData.indexOf(NEXT_LINE_SEPARATOR)) >= 0) {
+      nextLinePosition = remainingData.indexOf(NEXT_LINE_SEPARATOR);
+
+      while (nextLinePosition >= 0) {
         const completeRow = remainingData.slice(0, nextLinePosition + 1);
         remainingData = remainingData.slice(++nextLinePosition);
         importedRowCount++;
@@ -112,6 +114,8 @@ export class TSVFileReader extends EventEmitter implements FileReader {
         await new Promise((resolve) => {
           this.emit('line', parsedOffer, resolve);
         });
+
+        nextLinePosition = remainingData.indexOf('\n');
       }
     }
 

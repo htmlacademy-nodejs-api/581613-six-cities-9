@@ -9,14 +9,13 @@
   ],
   "main": "main.js",
   "scripts": {
-    "start": "npm run build && node ./dist/main.js",
+    "start:rest": "npm run build && node ./dist/main.rest.js",
     "dev": "nodemon",
     "build": "npm run clean && npm run compile",
     "lint": "eslint src/ --ext .ts --fix",
     "compile": "tsc -p tsconfig.json",
     "clean": "rimraf dist",
     "ts": "tsc --noEmit && node --no-warnings=--no-warnings=ExperimentalWarning --loader ts-node/esm",
-    "rest:build": "npm run build && node ./dist/main.rest.js",
     "cli:import:database": "npm run ts ./src/main.cli.ts -- --import ./mocks/test-data.tsv admin test localhost six-cities",
     "mock:server": "json-server ./mocks/mock-server-data.json --port 3123 --host localhost",
     "mock:generate:tsv": "npm run ts ./src/main.cli.ts -- --generate 100 ./mocks/test-data.tsv http://localhost:3123/api"

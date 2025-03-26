@@ -41,7 +41,7 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
   public isPro: boolean;
 
   @prop({ required: false, type: String })
-  public favourites: mongoose.Types.Array<string>;
+  public favorites: mongoose.Types.Array<string>;
 
   public setPassword(password: string, salt: string) {
     this.password = createSHA256(password, salt);

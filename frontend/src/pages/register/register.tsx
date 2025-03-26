@@ -14,7 +14,6 @@ const Register = (): JSX.Element => {
   const [avatar, setAvatar] = useState<File | undefined>();
 
   const handleAvatarUpload = (evt: ChangeEvent<HTMLInputElement>) => {
-    console.log(evt.target.files)
     if (!evt.target.files) {
       return;
     }
@@ -33,7 +32,7 @@ const Register = (): JSX.Element => {
     } else {
        delete data.avatar;
     }
-    
+
     dispatch(registerUser({ ...data, isPro: !!data.isPro }));
   };
 

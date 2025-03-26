@@ -37,13 +37,13 @@ export class DefaultUserService implements UserService {
   public async findByEmailOrCreate(dto: CreateUserDto, salt: string): Promise<DocumentType<UserEntity>> {
     const user = await this.findByEmail(dto.email);
 
-    return user ?? this.create(dto, salt);
+    return user ?? await this.create(dto, salt);
   }
 
-  public async changeFavouriteOffer(userId: string, offerId: string, isDelete: boolean): Promise<DocumentType<UserEntity> | null> {
+  public async changeFavoriteOffer(userId: string, offerId: string, isDelete: boolean): Promise<DocumentType<UserEntity> | null> {
     return this.userModel.findByIdAndUpdate(userId, {
       [isDelete ? '$pull' : '$push']: {
-        favourites: offerId,
+        favorites: offerId,
       },
     }, { new: true });
   }
